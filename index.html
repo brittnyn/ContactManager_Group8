@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+	<head>
+		<meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script type="text/javascript" src="js/md5.js"></script>
+		<script type="text/javascript" src="js/code.js"></script>
+		<link href="css/styles.css" rel="stylesheet">	
+		<title>Login | Marmoris</title>
+		<!-- TODO: Find background image -->
+	</head>
+	
+	<body>
+		<div id="loginDiv">
+			<div id="loginHeader">
+                <header>Contact Manager</header>
+            </div>
+			<div class="inputDiv">
+				<input type="text" class="inputField" id="loginName" placeholder="Username" autocomplete="off" required/>
+			</div>
+			<div class="inputDiv">
+				<input type="password" class="inputField" id="loginPassword" placeholder="Password" autocomplete="off" required/>
+			</div>
+			<div class="buttonDiv">
+				<button type="button" id="loginButton" onclick="doLogin();"</button>
+				<span id="loginResult"></span> 
+			</div>
+			<div class="signUpDiv">
+				<!-- TODO: Create sign up link -->
+				<p>Don't have an account? <a href="#">Sign Up</a></p>
+			</div>
+		</div>
+		<hr>
+	</body>
+</html>
