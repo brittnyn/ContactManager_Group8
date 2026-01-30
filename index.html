@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html lang="en">
 	<head>
 		<meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
@@ -7,29 +7,135 @@
 		<script type="text/javascript" src="js/code.js"></script>
 		<link href="css/styles.css" rel="stylesheet">	
 		<title>Login | Marmoris</title>
-		<!-- TODO: Find background image -->
 	</head>
 	
 	<body>
-		<div id="loginDiv">
-			<div id="loginHeader">
-                <header>Contact Manager</header>
-            </div>
-			<div class="inputDiv">
-				<input type="text" class="inputField" id="loginName" placeholder="Username" autocomplete="off" required/>
-			</div>
-			<div class="inputDiv">
-				<input type="password" class="inputField" id="loginPassword" placeholder="Password" autocomplete="off" required/>
-			</div>
-			<div class="buttonDiv">
-				<button type="button" id="loginButton" onclick="doLogin();"</button>
-				<span id="loginResult"></span> 
-			</div>
-			<div class="signUpDiv">
-				<!-- TODO: Create sign up link -->
-				<p>Don't have an account? <a href="#">Sign Up</a></p>
+		<div class="containerDiv" aria-label="Main Container">
+			<div class="boxDiv">
+				<!-- Login Box -->
+				<div class="loginBox">
+					<div id="boxHeader">
+						<h3>Contact Manager</h3>
+						<small>Welcome Back!</small>
+					</div>
+					<div id="groupDiv">
+						<div class="inputDiv">
+							<input type="text" class="inputField" id="loginName" required/>
+							<label for="loginName">Username</label>
+						</div>
+						<div class="inputDiv">
+							<input type="password" class="inputField" id="loginPassword" autocomplete="off" required/>
+							<label for="loginPassword">Password</label>
+						</div>
+						<div class="showPassword">
+							<div id="eyeDiv">
+								<div class="eyeBox" onclick="toggleLoginPassword();">
+									<i class ="fa-regular fa-eye" id="eye"></i>
+									<i class ="fa-regular fa-eye-slash" id="eyeSlash"></i>
+								</div>
+							</div>
+						</div>
+						<div class="buttonDiv">
+							<button type="button" id="loginButton" onclick="doLogin();"></button>
+							<label for="loginButton">Log In</label>
+							<span id="loginResult"></span> 
+						</div>
+					</div>
+				</div>
+
+				<!-- Register Box-->
+				<div class="registerBox">
+					<div id="boxHeader">
+						<h3>Sign Up</h3>
+						<small>Thank you for joining!</small>
+					</div>
+					<div id="groupDiv">
+						<div class="inputDiv">
+							<input type="text" class="inputField" id="regName" required/>
+							<label for="regName">Username</label>
+						</div>
+						<div class="inputDiv">
+							<input type="password" class="inputField" id="regPassword" autocomplete="off" required/>
+							<label for="regPassword">Password</label>
+						</div>
+						<div class="showPassword">
+							<div id="eyeDiv">
+								<div class="eyeBox" onclick="toggleRegPassword();">
+									<i class ="fa-regular fa-eye" id="eye-2"></i>
+									<i class ="fa-regular fa-eye-slash" id="eyeSlash-2"></i>
+								</div>
+							</div>
+						</div>
+						<div class="buttonDiv">
+							<button type="button" id="registerButton" onclick="doRegister();"></button>
+							<label for="registerButton">Register</label>
+							<span id="registerResult"></span> 
+						</div>
+					</div>
+				</div> 
+				<!--Switch between Login and Register Boxes -->
+				<div id="switchBox" aria-label="Navigation">
+					<a href="#" id="loginSwitch" onclick="switchToLogin()">Login</a>
+					<a href="#" id="registerSwitch" onclick="switchToRegister()">Register</a>
+					<div class="activateSwitch" id="switchButton"></div>
+				</div>
 			</div>
 		</div>
-		<hr>
+
+		<script>
+			// Switch between Login and Register Boxes
+			var x = document.querySelector('.loginBox');
+			var y = document.querySelector('.registerBox');
+			var z = document.getElementById('switchButton');
+
+
+			function switchToLogin()
+			{
+				x.style.left = "27px";
+				y.style.left = "350px";
+				z.style.left = "0px";
+			}
+			
+			function switchToRegister()
+			{
+				x.style.left = "-350px";
+				y.style.left = "27px";
+				z.style.left = "150px";
+			}
+
+			//Password Toggle
+			function toggleLoginPassword(){
+				var passwordField = document.getElementById("loginPassword");
+				var eyeIcon = document.getElementById("eye");
+				var eyeSlashIcon = document.getElementById("eyeSlash");
+
+				if(passwordField.type === "password"){
+					passwordField.type = "text";
+					eyeIcon.style.opacity = 0;
+					eyeSlashIcon.style.opacity = 1;
+				} else {
+					passwordField.type = "password";
+					eyeIcon.style.opacity = 1;
+					eyeSlashIcon.style.opacity = 0;
+				}
+			}
+
+			function toggleRegPassword(){
+				var passwordField = document.getElementById("regPassword");
+				var eyeIcon = document.getElementById("eye-2");
+				var eyeSlashIcon = document.getElementById("eyeSlash-2");
+
+				if(passwordField.type === "password"){
+					passwordField.type = "text";
+					eyeIcon.style.opacity = 0;
+					eyeSlashIcon.style.opacity = 1;
+				} else {
+					passwordField.type = "password";
+					eyeIcon.style.opacity = 1;
+					eyeSlashIcon.style.opacity = 0;
+				}
+			}
+		
+		</script>
 	</body>
 </html>
