@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Marmoris | Contact Manager</title>
+    <style>
+        * 
+        {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition-duration: 300ms;
+        }
+
+        body 
+        {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: rgba(121, 178, 218, 0.8);
+            color: white;
+            flex-direction: column;
+            gap: 24px;
+            padding: 24px;
+
+        }
+
+        header, main, footer 
+        {
+            max-width: 100%;
+            width: 800px;
+            margin: 0 auto;
+        }
+
+        header 
+        {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(42,71,128,0.9);
+        }
+
+        main 
+        {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            flex: 1;
+        }
+
+        .addIcon 
+        {
+            font-size: 1.5rem;
+        }
+
+        .addIcon:hover 
+        {
+            color: rgb(243, 245, 246);
+            cursor: pointer;
+        }
+
+        #addContact 
+        {
+            display: none;
+        }
+
+        #addContact form
+        {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+            border: 2px solid rgba(42,71,128,0.9);
+        }
+
+        #addContact input
+        {
+            background: rgba(204, 230, 245, 0.8);
+            outline: none;
+            padding: 12px 8px;
+            color: rgba(42,71,128,0.9);
+            flex: 1;
+            border: none;
+        }
+
+        #addContact button
+        {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            background: rgba(42,71,128,0.9);
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 0 8px;
+            color: #d1cece;
+            font-weight: bold;
+        }
+
+        #addContact button:hover
+        {
+            background: #d1cece;
+            color: rgba(42,71,128,0.9);
+        }
+
+        #contactList
+        {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .contactName
+        {
+            display: flex;
+            align-items: center;
+        }
+
+        .contactName p
+        {
+            flex: 1;
+            padding: 8px;
+            background:rgb(47, 93, 125, 0.7);
+        }
+
+        .actions
+        {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .actions :hover
+        {
+            color: #d1cece;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Contact Manager</h1>
+        <i id="addContactIcon" class="fa-solid fa-plus addIcon"></i>
+    </header>
+    <main>
+        <section id="addContact">
+            <form id="contactForm">
+                <input type="text" id="name" name="name" placeholder="Name" autocomplete="off" required>
+                <input type="tel" id="phone" name="phone" placeholder="Phone Number" autocomplete="off" required>
+                <input type="email" id="email" name="email" placeholder="Email" autocomplete="off" required>
+                <button id="add">Add Contact</button>
+            </form>
+        </section>
+        <section id="contactList">
+        </section>
+    </main>
+    <footer>
+    </footer>
+</body>
+
+<script>
+    let contacts = [];
+    const contactListElement = document.getElementById('contactList');
+    const contactForm = document.getElementById('contactForm');
+    const addContactButton = document.getElementById('add');
+    const addContactIcon = document.getElementById('addContactIcon');
+    const addContact2 = document.getElementById('addContact');
+
+    function toggleAddContactForm() 
+    {
+        addContact2.style.display = addContact2.style.display === 'none' ? 'block' : 'none';
+    }
+
+    addContactIcon.addEventListener('click', toggleAddContactForm);
+
+    function addContact(name, phone, email) 
+    {
+        contacts.push([name, phone, email]);
+    }
+
+    function deleteContact(index) 
+    {
+        contacts.splice(index, 1);
+        contactListElement.innerHTML = '';
+        renderContacts();
+    }
+
+    function editContact(index) 
+    {
+        const newName = prompt("Enter new name:", contacts[index][0]);
+        const newPhone = prompt("Enter new phone number:", contacts[index][1]);
+        const newEmail = prompt("Enter new email:", contacts[index][2]);
+        if (newName && newPhone && newEmail) {
+            contacts[index] = [newName, newPhone, newEmail];
+            contactListElement.innerHTML = '';
+            renderContacts();
+        }
+    }
+
+    addContactButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+        addContact(name, phone, email);
+        contactForm.reset();
+        contactListElement.innerHTML = '';
+        renderContacts();
+        addContact2.style.display = 'none';
+    });
+
+    function renderContacts() {
+        contacts.forEach((contact, i) => {
+            let currentHTML = contactListElement.innerHTML;
+            let newHTML = (
+                `<div class="contactName">
+                    <p>${i + 1}. ${contact[0]}</p>
+                    <p>${contact[1]}</p>
+                    <p>${contact[2]}</p>
+                    <div class="actions">
+                        <i onclick="editContact(${i})" class="fa-solid fa-pencil"></i>
+                        <i onclick="deleteContact(${i})" class="fa-regular fa-trash-can"></i>
+                    </div>
+                </div>`
+                )
+
+            contactListElement.innerHTML = currentHTML + newHTML;
+        })
+    }
+    renderContacts();
+    </script>
+</html>
