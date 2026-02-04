@@ -1,5 +1,5 @@
 Team meeting 2/3/26
-Talked about project name change. marmaris?
+Talked about project name change. Marmoris?
 
 Ban: Sine waves to make wave texture on the front page
 
