@@ -274,10 +274,6 @@ function validLoginForm(username, password) {
         return "* Password is required.";
     }
 
-    if (!PASSWORD_REGEX.test(password)) {
-        return "* Password format is invalid.";
-    }
-
     return  null;
 }
 
