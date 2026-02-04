@@ -15,9 +15,9 @@
 		<main>
 			<div class="containerDiv" aria-label="Main Container">
 				<div class="boxDiv" id="box">
-					<!-- Login Box -->
 					<div class="formViewpoint">
-						<div class="loginBox activePanel">
+						<!-- Login Box -->
+						<div class="loginBox">
 							<div id="boxHeader">
 								<h3>Contact Manager</h3>
 								<small>Welcome Back!</small>
@@ -47,7 +47,7 @@
 							</div>
 						</div>
 						<!-- Register Box-->
-						<div class="registerBox inactivePanel">
+						<div class="registerBox">
 							<div id="boxHeader">
 								<h3>Sign Up</h3>
 								<small>Thank you for joining!</small>
@@ -62,36 +62,13 @@
 									<label for="regLastName">Last Name</label>
 								</div>
 								<div class="inputDiv">
-									<input 
-									type="text" class="inputField" id="regUser" 
-									autocomplete="off" required
-									title="Must be between 3-18 characters and must contain at least one letter"/>
+									<input type="text" class="inputField" id="regUser" autocomplete="off" required>
 									<label for="regUser">Username</label>
 								</div>
 								<div class="inputDiv">
-									<input type="password" class="inputField" id="regPassword" 
-									autocomplete="off" required
-									title="Must be between 8-32 characters and must contain at least one number and one special character"/>
+									<input type="password" class="inputField" id="regPassword" autocomplete="off" required>
 									<label for="regPassword">Password</label>
 								</div>
-								<!--Check user/pass requirements before account creation-->
-								<div id="userRequirements">
-									<h3>Username must contain the following:</h3>
-									<p id="userLetter" class="invalid">At least one letter</p>
-									<p id="userLength" class="invalid">3 to 18 characters</p>
-									<h3>Username may contain the following:</h3>
-									<p id="userNumber" class="opt">Numbers</p>
-									<p id="userUnderscore" class="opt">Underscores</p>
-									<p id="userHyphen" class="opt">Hyphens</p>
-								</div>
-								<div id="passRequirements" class="hidden">
-									<h3>Password must contain the following:</h3>
-									<p id="passLength" class="invalid">8 to 32 characters</p>
-									<p id="passLetter" class="invalid">At least one letter</p>
-									<p id="passNumber" class="invalid">At least one number</p>
-									<p id="passSpecial" class="invalid">At least one special character</p>
-								</div>
-								
 								<div class="showPassword">
 									<div id="eyeDiv">
 										<div class="eyeBox" onclick="toggleRegPassword();" aria-label="Show password" role="button">
@@ -101,10 +78,9 @@
 									</div>
 								</div>
 								<div class="buttonDiv">
-									<!--<button type="button" id="registerButton" onclick="doRegister();"></button>-->
-									<button type="button" id="registerButton" onclick="switchToLogin();"></button>
+									<button type="button" id="registerButton" onclick="doRegister();"></button>
 									<label for="registerButton">Register</label>
-									<span id="registerResult"></span> 
+									<span id="registerResult" class="errorMsg"></span> 
 								</div>
 							</div>
 						</div> 
@@ -121,8 +97,5 @@
 		<!-- JavaScript Files -->	
 		<script type="text/javascript" src="js/md5.js"></script>
 		<script type="text/javascript" src="js/code.js"></script>
-		<script>
-			
-		</script>
 	</body>
 </html>

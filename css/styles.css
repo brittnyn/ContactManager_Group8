@@ -241,102 +241,12 @@ i
     font-family: 'Poppins';
 }
 
-
-#userRequirements, #passRequirements 
+.errorMsg
 {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height .35s ease, opacity .25s ease;
-    opacity: 0;
-    color: #000;
-    position: relative;
-    bottom: 1px;
-    text-align: center;
-    font-family: 'Poppins';
-}
-
-.show-req {
-    max-height: 300px;  /* enough space for content */
-    opacity: 1;
-}
-
-
-.errorMsg {
     display: block;
-    margin-top: 6px;
+    width: 100%;
     text-align: center;
-    color: #2f1369;
-}
-
-#registerResult 
-{
-    position: relative;
-    bottom: 350px;
     color: rgb(203, 55, 21);
     font-family: 'Poppins';
-}
-
-
-#loggedInDiv
-{
-    font-size: 30px;
-    width: 70%;
-    margin-left: 15%;
-    padding: 25px;
-    background-color: #b2b2b2;
-}
-
-#accessUIDiv
-{
-    font-size: 30px;
-    width: 70%;
-    margin-left: 15%;
-    padding: 25px;
-    background-color: #b2b2b2;
-}
-
-#userName
-{
-    display: inline-block;
-    width: 80%;
-    margin-left: 10%;
-    text-align: center;
-}
-
-#logoutButton
-{
-    width: 20%;
-    margin-left: 40%;
-}
-
-#explanationPass, #explanationUser 
-{
-    display: none;
-    color: #000;
-    position: absolute;
-    bottom: 1px;
-    text-align: center;
-    font-family: 'Poppins';
-}
-
-#explanationPass p 
-{
-    position: relative;
-    bottom: 10px;
-}
-
-#loginResult 
-{
-    position: relative;
-    color: rgb(203, 55, 21);
-    font-family: 'Poppins';
-    top: 5px;
-    text-align: center;
-}
-
-#registerResult {
-    position: relative;
-    bottom: 350px;
-    color: rgb(203, 55, 21);
-    font-family: 'Poppins';
+    margin-top: -10px;
 }
