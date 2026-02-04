@@ -14,30 +14,22 @@ var but = document.getElementById('switchButton');
 
 function switchToLogin()
 {
-	log.classList.add("activePanel");
-    log.classList.remove("inactivePanel");
-
-    reg.classList.add("inactivePanel");
-    reg.classList.remove("activePanel");
-
 	log.style.transform = "translateX(0)";
 	reg.style.transform = "translateX(20%)";
 	but.style.left = "0px";
+
+	document.getElementById("registerResult").textContent = "";
 }
 
 function switchToRegister()
 {
-	reg.classList.add("activePanel");
-    reg.classList.remove("inactivePanel");
-
-    log.classList.add("inactivePanel");
-    log.classList.remove("activePanel");
-
 	log.style.transform = "translateX(-125%)";
 	reg.style.transform = "translateX(-145%)";
 	but.style.left = "150px";
 
 	document.getElementById("loginResult").textContent = "";
+	document.getElementById("loginName").value="";
+	document.getElementById("loginPassword").value="";
 }
 
 // Password Toggle in Login Page
@@ -47,11 +39,14 @@ function toggleLoginPassword()
 	var eyeIcon = document.getElementById("eye");
 	var eyeSlashIcon = document.getElementById("eyeSlash");
 
-	if(passwordField.type === "password"){
+	if(passwordField.type === "password")
+	{
 		passwordField.type = "text";
 		eyeIcon.style.opacity = 0;
 		eyeSlashIcon.style.opacity = 1;
-	} else {
+	} 
+	else 
+	{
 		passwordField.type = "password";
 		eyeIcon.style.opacity = 1;
 		eyeSlashIcon.style.opacity = 0;
@@ -64,11 +59,14 @@ function toggleRegPassword(){
 	var eyeIcon = document.getElementById("eye-2");
 	var eyeSlashIcon = document.getElementById("eyeSlash-2");
 
-	if(passwordField.type === "password"){
+	if(passwordField.type === "password")
+	{
 		passwordField.type = "text";
 		eyeIcon.style.opacity = 0;
 		eyeSlashIcon.style.opacity = 1;
-	} else {
+	}
+	else
+	{
 		passwordField.type = "password";
 		eyeIcon.style.opacity = 1;
 		eyeSlashIcon.style.opacity = 0;
@@ -93,13 +91,12 @@ function doLogin()
     	return;
 	}
 
-    document.getElementById("loginResult").innerHTML = "Logging in";
-
 	var tmp = 
 	{
 		login:login,
 		password:hash
 	};
+
 	let jsonPayload = JSON.stringify( tmp );
 	
 	let url = urlBase + '/Login.' + extension;
@@ -118,15 +115,21 @@ function doLogin()
 		
 				if( userId < 1 )
 				{		
-					document.getElementById("loginResult").innerHTML = "User/Password combination incorrect";
+					document.getElementById("loginResult").innerHTML = "* User/Password Combination Incorrect.";
 					return;
 				}
-		
+				
 				firstName = jsonObject.firstName;
 				lastName = jsonObject.lastName;
-
 				saveCookie();
-				window.location.href = "contacts.html";
+
+				document.getElementById("loginResult").innerText = "Logging in...";
+                
+				setTimeout(() => {
+  						console.log("Delaying");
+				}, 2000);
+
+				window.location.href = "contact.html";
 			}
 		};
 		xhr.send(jsonPayload);
@@ -154,8 +157,6 @@ function doRegister()
 	}
  
     var hash = md5(password);
-
-  	document.getElementById("registerResult").innerText = "Account created! Please log in.";
     saveCookie();
 
     let tmp = 
@@ -168,7 +169,7 @@ function doRegister()
 
     let jsonPayload = JSON.stringify(tmp);
 
-    let url = urlBase + '/SignUp.' + extension;
+    let url = urlBase + '/Register.' + extension;
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
@@ -192,10 +193,12 @@ function doRegister()
                 firstName = jsonObject.firstName;
                 lastName = jsonObject.lastName;
 
-				document.getElementById("registerResult").innerText = "Account created! Please log in.";
-				document.getElementById("groupDiv2").reset();
+				document.getElementById("registerResult").innerText = "Account created! Logging in...";
                 saveCookie();
-				switchtoLogin();
+				setTimeout(() => {
+  						console.log("Delaying");
+				}, 2000);
+				window.location.href = "contact.html";
             }
         };
 

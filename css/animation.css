@@ -1,0 +1,315 @@
+.background
+{
+    z-index: -1;
+}
+.bubbles
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.bubble
+{
+    position: absolute;
+    bottom: -100px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: rise 15s infinite ease-in;
+}
+
+.bubble:nth-child(1)
+{
+    width: 40px;
+    height: 40px;
+    left: 10%;
+    animation-duration: 8s;
+}
+
+.bubble:nth-child(2)
+{
+    width: 20px;
+    height: 20px;
+    left: 20%;
+    animation-duration: 5s;
+    animation-delay: 1s;
+}
+
+.bubble:nth-child(3)
+{
+    width: 50px;
+    height: 50px;
+    left: 35%;
+    animation-duration: 7s;
+    animation-delay: 2s;
+}
+
+.bubble:nth-child(4)
+{
+    width: 80px;
+    height: 80px;
+    left: 50%;
+    animation-duration: 11s;
+    animation-delay: 0s;
+}
+
+.bubble:nth-child(5)
+{
+    width: 15px;
+    height: 15px;
+    left: 55%;
+    animation-duration: 6s;
+    animation-delay: 1s;
+}
+
+.bubble:nth-child(6)
+{
+    width: 30px;
+    height: 30px;
+    left: 65%;
+    animation-duration: 8s;
+    animation-delay: 3s;
+}
+
+.bubble:nth-child(7)
+{
+    width: 60px;
+    height: 60px;
+    left: 75%;
+    animation-duration: 12s;
+    animation-delay: 2s;
+}
+
+.bubble:nth-child(8)
+{
+    width: 25px;
+    height: 25px;
+    left: 80%;
+    animation-duration: 6s;
+    animation-delay: 2s;
+}
+
+.bubble:nth-child(9)
+{
+    width: 10px;
+    height: 10px;
+    left: 70%;
+    animation-duration: 5s;
+    animation-delay: 1s;
+}
+
+.bubble:nth-child(10)
+{
+    width: 45px;
+    height: 45px;
+    left: 25%;
+    animation-duration: 10s;
+    animation-delay: 4s;
+}
+
+@keyframes rise
+{
+    0% 
+    {
+        bottom: -100px;
+        transform: translateX(0);
+    }
+    50% 
+    {
+        transform: translateX(100px);
+    }
+    100% 
+    {
+        bottom: 100vh;
+        transform: translateX(-200px);
+    }
+}
+
+.jellyfish 
+{
+    position: absolute;
+    z-index: 2;
+    opacity: 0.85;
+}
+
+.jellyfish1 
+{
+    width: 120px;
+    height: 200px;
+    top: 20%;
+    left: 15%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 200"><path d="M 60 15 Q 35 15 20 35 Q 10 50 15 65 L 25 65 Q 20 50 30 38 Q 45 25 60 25 Q 75 25 90 38 Q 100 50 95 65 L 105 65 Q 110 50 100 35 Q 85 15 60 15 Z" fill="%23ffb3d9" opacity="0.75"/><path d="M 25 65 Q 22 90 18 115 Q 15 135 20 155 Q 22 165 18 175" stroke="%23ffb3d9" stroke-width="2" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M 35 65 Q 33 95 30 125 Q 28 150 32 175 Q 34 188 30 198" stroke="%23ffc8e3" stroke-width="1.8" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M 45 65 Q 42 85 40 105 Q 38 125 42 145 Q 45 160 43 172" stroke="%23ffb3d9" stroke-width="2.2" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M 55 65 Q 53 100 51 135 Q 49 165 53 190 Q 55 198 52 200" stroke="%23ffd9ec" stroke-width="1.6" fill="none" opacity="0.6" stroke-linecap="round"/><path d="M 60 65 Q 60 105 60 145 Q 60 175 60 200" stroke="%23ffb3d9" stroke-width="2.5" fill="none" opacity="0.75" stroke-linecap="round"/><path d="M 65 65 Q 67 100 69 135 Q 71 165 67 190 Q 65 198 68 200" stroke="%23ffd9ec" stroke-width="1.6" fill="none" opacity="0.6" stroke-linecap="round"/><path d="M 75 65 Q 78 85 80 105 Q 82 125 78 145 Q 75 160 77 172" stroke="%23ffb3d9" stroke-width="2.2" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M 85 65 Q 87 95 90 125 Q 92 150 88 175 Q 86 188 90 198" stroke="%23ffc8e3" stroke-width="1.8" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M 95 65 Q 98 90 102 115 Q 105 135 100 155 Q 98 165 102 175" stroke="%23ffb3d9" stroke-width="2" fill="none" opacity="0.7" stroke-linecap="round"/></svg>') no-repeat;
+    animation: drift1 18s infinite ease-in-out;
+}
+
+.jellyfish2 
+{
+    width: 100px;
+    height: 170px;
+    top: 60%;
+    left: 80%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 170"><path d="M 50 12 Q 30 12 18 28 Q 10 40 13 52 L 21 52 Q 18 42 25 33 Q 37 20 50 20 Q 63 20 75 33 Q 82 42 79 52 L 87 52 Q 90 40 82 28 Q 70 12 50 12 Z" fill="%23ffa3cc" opacity="0.75"/><path d="M 21 52 Q 18 72 15 92 Q 12 110 16 128 Q 18 140 15 150" stroke="%23ffa3cc" stroke-width="1.8" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M 30 52 Q 28 78 25 105 Q 23 128 27 148 Q 29 160 26 168" stroke="%23ffb8db" stroke-width="1.6" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M 38 52 Q 35 70 33 88 Q 31 105 35 122 Q 38 135 36 145" stroke="%23ffa3cc" stroke-width="2" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M 46 52 Q 44 82 42 112 Q 40 138 44 158 Q 46 166 43 170" stroke="%23ffcce6" stroke-width="1.5" fill="none" opacity="0.6" stroke-linecap="round"/><path d="M 50 52 Q 50 87 50 122 Q 50 147 50 170" stroke="%23ffa3cc" stroke-width="2.2" fill="none" opacity="0.75" stroke-linecap="round"/><path d="M 54 52 Q 56 82 58 112 Q 60 138 56 158 Q 54 166 57 170" stroke="%23ffcce6" stroke-width="1.5" fill="none" opacity="0.6" stroke-linecap="round"/><path d="M 62 52 Q 65 70 67 88 Q 69 105 65 122 Q 62 135 64 145" stroke="%23ffa3cc" stroke-width="2" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M 70 52 Q 72 78 75 105 Q 77 128 73 148 Q 71 160 74 168" stroke="%23ffb8db" stroke-width="1.6" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M 79 52 Q 82 72 85 92 Q 88 110 84 128 Q 82 140 85 150" stroke="%23ffa3cc" stroke-width="1.8" fill="none" opacity="0.7" stroke-linecap="round"/></svg>') no-repeat;
+    animation: drift2 15s infinite ease-in-out 3s;
+}
+
+.jellyfish3 
+{
+    width: 90px;
+    height: 160px;
+    top: 40%;
+    left: 50%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 160"><path d="M 45 10 Q 28 10 16 24 Q 8 35 11 46 L 18 46 Q 15 37 22 29 Q 33 18 45 18 Q 57 18 68 29 Q 75 37 72 46 L 79 46 Q 82 35 74 24 Q 62 10 45 10 Z" fill="%23ff99c2" opacity="0.75"/><path d="M 18 46 Q 15 64 12 82 Q 9 98 13 114 Q 15 125 12 135" stroke="%23ff99c2" stroke-width="1.7" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M 26 46 Q 24 69 21 93 Q 19 113 23 132 Q 25 143 22 152" stroke="%23ffadd5" stroke-width="1.5" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M 33 46 Q 30 62 28 78 Q 26 93 30 108 Q 33 120 31 130" stroke="%23ff99c2" stroke-width="1.9" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M 40 46 Q 38 73 36 100 Q 34 123 38 143 Q 40 152 37 160" stroke="%23ffc2e0" stroke-width="1.4" fill="none" opacity="0.6" stroke-linecap="round"/><path d="M 45 46 Q 45 78 45 110 Q 45 133 45 160" stroke="%23ff99c2" stroke-width="2.1" fill="none" opacity="0.75" stroke-linecap="round"/><path d="M 50 46 Q 52 73 54 100 Q 56 123 52 143 Q 50 152 53 160" stroke="%23ffc2e0" stroke-width="1.4" fill="none" opacity="0.6" stroke-linecap="round"/><path d="M 57 46 Q 60 62 62 78 Q 64 93 60 108 Q 57 120 59 130" stroke="%23ff99c2" stroke-width="1.9" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M 64 46 Q 66 69 69 93 Q 71 113 67 132 Q 65 143 68 152" stroke="%23ffadd5" stroke-width="1.5" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M 72 46 Q 75 64 78 82 Q 81 98 77 114 Q 75 125 78 135" stroke="%23ff99c2" stroke-width="1.7" fill="none" opacity="0.7" stroke-linecap="round"/></svg>') no-repeat;
+    animation: drift3 20s infinite ease-in-out 5s;
+}
+
+@keyframes drift1 
+{
+    0%, 100% 
+    {
+        transform: translateY(0) translateX(0) rotate(0deg);
+    }
+    25% 
+    {
+        transform: translateY(-30px) translateX(15px) rotate(2deg);
+    }
+    50% 
+    {
+        transform: translateY(-10px) translateX(25px) rotate(-1deg);
+    }
+    75% 
+    {
+        transform: translateY(20px) translateX(10px) rotate(1deg);
+    }
+}
+
+@keyframes drift2 
+{
+    0%, 100% 
+    {
+        transform: translateY(0) translateX(0) rotate(0deg);
+    }
+    30% 
+    {
+        transform: translateY(25px) translateX(-20px) rotate(-2deg);
+    }
+    60% 
+    {
+        transform: translateY(-15px) translateX(-30px) rotate(1deg);
+    }
+    80% 
+    {
+        transform: translateY(10px) translateX(-10px) rotate(-1deg);
+    }
+}
+
+@keyframes drift3 
+{
+    0%, 100% 
+    {
+        transform: translateY(0) translateX(0) rotate(0deg);
+    }
+    20% 
+    {
+        transform: translateY(-20px) translateX(-15px) rotate(1deg);
+    }
+    55% 
+    {
+        transform: translateY(15px) translateX(10px) rotate(-2deg);
+    }
+    85% 
+    {
+        transform: translateY(-5px) translateX(-5px) rotate(1deg);
+    }
+}
+
+.seaweed {
+    position: absolute;
+    bottom: 0;
+    z-index: 2;
+    transform-origin: bottom center;
+}
+
+/* Left side cluster */
+.seaweed1 {
+    width: 80px;
+    height: 250px;
+    left: 5%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 250"><g><path d="M25,250 Q20,230 25,210 T25,170 T25,130 T25,90 T25,50 T25,10" fill="none" stroke="%23267365" stroke-width="8" opacity="0.7"/><path d="M40,250 Q45,225 40,200 T40,150 T40,100 T40,50 T40,0" fill="none" stroke="%232d8b7c" stroke-width="10"/><path d="M55,250 Q50,230 55,210 T55,170 T55,130 T55,90 T55,50 T55,10" fill="none" stroke="%23267365" stroke-width="7" opacity="0.6"/></g></svg>');
+    animation: sway1 6s infinite ease-in-out;
+}
+
+.seaweed2 {
+    width: 70px;
+    height: 180px;
+    left: 18%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 180"><g><path d="M25,180 Q20,165 25,150 T25,120 T25,90 T25,60 T25,30 T25,0" fill="none" stroke="%232d8b7c" stroke-width="9"/><path d="M45,180 Q50,160 45,140 T45,100 T45,60 T45,20" fill="none" stroke="%23267365" stroke-width="6" opacity="0.7"/></g></svg>');
+    animation: sway2 7s infinite ease-in-out 0.8s;
+}
+
+/* Middle cluster */
+.seaweed3 {
+    width: 65px;
+    height: 200px;
+    left: 45%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 65 200"><g><path d="M20,200 Q15,180 20,160 T20,120 T20,80 T20,40 T20,0" fill="none" stroke="%232d8b7c" stroke-width="8"/><path d="M35,200 Q40,175 35,150 T35,100 T35,50 T35,0" fill="none" stroke="%23205d52" stroke-width="10" opacity="0.8"/><path d="M50,200 Q45,185 50,170 T50,140 T50,110 T50,80 T50,50 T50,20" fill="none" stroke="%23267365" stroke-width="6" opacity="0.6"/></g></svg>');
+    animation: sway3 5.5s infinite ease-in-out 1.2s;
+}
+
+.seaweed4 {
+    width: 60px;
+    height: 220px;
+    left: 58%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 220"><g><path d="M30,220 Q25,200 30,180 T30,140 T30,100 T30,60 T30,20" fill="none" stroke="%232d8b7c" stroke-width="9"/><path d="M45,220 Q50,195 45,170 T45,120 T45,70 T45,20" fill="none" stroke="%23267365" stroke-width="7" opacity="0.7"/></g></svg>');
+    animation: sway4 6.5s infinite ease-in-out 0.3s;
+}
+
+/* Right side cluster */
+.seaweed5 {
+    width: 75px;
+    height: 190px;
+    right: 12%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75 190"><g><path d="M25,190 Q20,175 25,160 T25,130 T25,100 T25,70 T25,40 T25,10" fill="none" stroke="%23267365" stroke-width="7" opacity="0.6"/><path d="M40,190 Q45,170 40,150 T40,110 T40,70 T40,30" fill="none" stroke="%232d8b7c" stroke-width="10"/><path d="M55,190 Q50,170 55,150 T55,110 T55,70 T55,30" fill="none" stroke="%23205d52" stroke-width="8" opacity="0.75"/></g></svg>');
+    animation: sway5 7.5s infinite ease-in-out 1.5s;
+}
+
+.seaweed6 {
+    width: 55px;
+    height: 160px;
+    right: 3%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 160"><g><path d="M20,160 Q15,145 20,130 T20,100 T20,70 T20,40 T20,10" fill="none" stroke="%232d8b7c" stroke-width="8"/><path d="M35,160 Q40,140 35,120 T35,80 T35,40 T35,0" fill="none" stroke="%23267365" stroke-width="6" opacity="0.7"/></g></svg>');
+    animation: sway6 6.8s infinite ease-in-out 0.5s;
+}
+
+/* Animation keyframes */
+@keyframes sway1 {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
+@keyframes sway2 {
+    0%, 100% { transform: rotate(2deg); }
+    50% { transform: rotate(-4deg); }
+}
+
+@keyframes sway3 {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(4deg); }
+}
+
+@keyframes sway4 {
+    0%, 100% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+}
+
+@keyframes sway5 {
+    0%, 100% { transform: rotate(-4deg); }
+    50% { transform: rotate(2deg); }
+}
+
+@keyframes sway6 {
+    0%, 100% { transform: rotate(2deg); }
+    50% { transform: rotate(-3deg); }
+}
