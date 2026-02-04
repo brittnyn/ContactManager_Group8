@@ -2,7 +2,7 @@
 COP4331C Spring2026
 
 **Website Link** <br>
-[Contact Manager Project](https://adamdisanti.xyz/) <br>
+[Contact Manager Project](http://adamdisanti.xyz/) <br>
 
 **Roles:** <br>
 Project Manager: [Peter Jackson](https://github.com/pkj-web) <br>
