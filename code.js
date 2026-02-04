@@ -4,55 +4,212 @@ const extension = 'php';
 let userId = 0;
 let firstName = "";
 let lastName = "";
-let contacts = [];
+const ids = []
+
+// Switch between Login and Register Boxes
+var log = document.querySelector('.loginBox');
+var reg = document.querySelector('.registerBox');
+var but = document.getElementById('switchButton');
+
+
+function switchToLogin()
+{
+	log.classList.add("activePanel");
+    log.classList.remove("inactivePanel");
+
+    reg.classList.add("inactivePanel");
+    reg.classList.remove("activePanel");
+
+	log.style.transform = "translateX(0)";
+	reg.style.transform = "translateX(20%)";
+	but.style.left = "0px";
+}
+
+function switchToRegister()
+{
+	reg.classList.add("activePanel");
+    reg.classList.remove("inactivePanel");
+
+    log.classList.add("inactivePanel");
+    log.classList.remove("activePanel");
+
+	log.style.transform = "translateX(-125%)";
+	reg.style.transform = "translateX(-145%)";
+	but.style.left = "150px";
+
+	document.getElementById("loginResult").textContent = "";
+}
+
+// Password Toggle in Login Page
+function toggleLoginPassword()
+{
+	var passwordField = document.getElementById("loginPassword");
+	var eyeIcon = document.getElementById("eye");
+	var eyeSlashIcon = document.getElementById("eyeSlash");
+
+	if(passwordField.type === "password"){
+		passwordField.type = "text";
+		eyeIcon.style.opacity = 0;
+		eyeSlashIcon.style.opacity = 1;
+	} else {
+		passwordField.type = "password";
+		eyeIcon.style.opacity = 1;
+		eyeSlashIcon.style.opacity = 0;
+	}
+}
+
+// Password Toggle in Register Page
+function toggleRegPassword(){
+	var passwordField = document.getElementById("regPassword");
+	var eyeIcon = document.getElementById("eye-2");
+	var eyeSlashIcon = document.getElementById("eyeSlash-2");
+
+	if(passwordField.type === "password"){
+		passwordField.type = "text";
+		eyeIcon.style.opacity = 0;
+		eyeSlashIcon.style.opacity = 1;
+	} else {
+		passwordField.type = "password";
+		eyeIcon.style.opacity = 1;
+		eyeSlashIcon.style.opacity = 0;
+	}
+}
 
 function doLogin()
 {
 	userId = 0;
 	firstName = "";
 	lastName = "";
-
+	
 	let login = document.getElementById("loginName").value;
 	let password = document.getElementById("loginPassword").value;
+	
+	var hash = md5( password );
+	
+   	let error = validLoginForm(login, password);
+	if (error) 
+	{
+    	document.getElementById("loginResult").innerText = error;
+    	return;
+	}
 
-	document.getElementById("loginResult").innerHTML = "";
+    document.getElementById("loginResult").innerHTML = "Logging in";
 
-	let tmp = { login: login, password: password };
-	let jsonPayload = JSON.stringify(tmp);
-
+	var tmp = 
+	{
+		login:login,
+		password:hash
+	};
+	let jsonPayload = JSON.stringify( tmp );
+	
 	let url = urlBase + '/Login.' + extension;
 
 	let xhr = new XMLHttpRequest();
 	xhr.open("POST", url, true);
 	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
-
-	xhr.onreadystatechange = function()
+	try
 	{
-		if (this.readyState === 4 && this.status === 200)
+		xhr.onreadystatechange = function() 
 		{
-			let jsonObject = JSON.parse(xhr.responseText);
-			userId = jsonObject.id;
-
-			if (userId < 1)
+			if (this.readyState == 4 && this.status == 200) 
 			{
-				document.getElementById("loginResult").innerHTML = "User/Password combination incorrect";
-				return;
-			}
+				let jsonObject = JSON.parse( xhr.responseText );
+				userId = jsonObject.id;
+		
+				if( userId < 1 )
+				{		
+					document.getElementById("loginResult").innerHTML = "User/Password combination incorrect";
+					return;
+				}
+		
+				firstName = jsonObject.firstName;
+				lastName = jsonObject.lastName;
 
-			firstName = jsonObject.firstName;
-			lastName = jsonObject.lastName;
-			saveCookie();
-			window.location.href = "contact.html";
-		}
-	};
-	xhr.send(jsonPayload);
+				saveCookie();
+				window.location.href = "contacts.html";
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		document.getElementById("loginResult").innerHTML = err.message;
+	}
+}
+
+function doRegister() 
+{
+    firstName = document.getElementById("regFirst").value;
+    lastName = document.getElementById("regLast").value;
+
+    let username = document.getElementById("regUser").value;
+    let password = document.getElementById("regPassword").value;
+
+	let error = validSignUpForm(firstName, lastName, username, password);
+
+	if (error) 
+	{
+    	document.getElementById("registerResult").innerText = error;
+    	return;
+	}
+ 
+    var hash = md5(password);
+
+  	document.getElementById("registerResult").innerText = "Account created! Please log in.";
+    saveCookie();
+
+    let tmp = 
+	{
+        firstName: firstName,
+        lastName: lastName,
+        login: username,
+        password: hash
+    };
+
+    let jsonPayload = JSON.stringify(tmp);
+
+    let url = urlBase + '/SignUp.' + extension;
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+    try {
+        xhr.onreadystatechange = function () {
+
+            if (this.readyState != 4) {
+                return;
+            }
+
+            if (this.status == 409) {
+                document.getElementById("registerResult").innerHTML = "Username Already Exists";
+                return;
+            }
+
+            if (this.status == 200) {
+
+                let jsonObject = JSON.parse(xhr.responseText);
+                userId = jsonObject.id;
+                firstName = jsonObject.firstName;
+                lastName = jsonObject.lastName;
+
+				document.getElementById("registerResult").innerText = "Account created! Please log in.";
+				document.getElementById("groupDiv2").reset();
+                saveCookie();
+				switchtoLogin();
+            }
+        };
+
+        xhr.send(jsonPayload);
+    } catch (err) {
+        document.getElementById("registerResult").innerHTML = err.message;
+    }
 }
 
 function saveCookie()
 {
 	let minutes = 20;
 	let date = new Date();
-	date.setTime(date.getTime() + minutes * 60 * 1000);
+	date.setTime(date.getTime()+(minutes*60*1000));	
 	document.cookie = "firstName=" + firstName + ",lastName=" + lastName + ",userId=" + userId + ";expires=" + date.toGMTString();
 }
 
@@ -61,25 +218,98 @@ function readCookie()
 	userId = -1;
 	let data = document.cookie;
 	let splits = data.split(",");
-	for (let i = 0; i < splits.length; i++)
+	for(var i = 0; i < splits.length; i++) 
 	{
-		let tokens = splits[i].trim().split("=");
-		if (tokens[0] === "firstName") firstName = tokens[1];
-		else if (tokens[0] === "lastName") lastName = tokens[1];
-		else if (tokens[0] === "userId") userId = parseInt(tokens[1]);
+		let thisOne = splits[i].trim();
+		let tokens = thisOne.split("=");
+		if( tokens[0] == "firstName" )
+		{
+			firstName = tokens[1];
+		}
+		else if( tokens[0] == "lastName" )
+		{
+			lastName = tokens[1];
+		}
+		else if( tokens[0] == "userId" )
+		{
+			userId = parseInt( tokens[1].trim() );
+		}
 	}
-
-	if (userId < 0) window.location.href = "index.html";
-	else document.getElementById("userName").innerHTML = `Logged in as ${firstName} ${lastName}`;
+	
+	if( userId < 0 )
+	{
+		window.location.href = "index.html";
+	}
+	else
+	{
+		document.getElementById("userName").innerHTML = "Logged in as " + firstName + " " + lastName;
+	}
 }
 
 function doLogout()
 {
-	userId = 0; firstName = ""; lastName = "";
+	userId = 0;
+	firstName = "";
+	lastName = "";
 	document.cookie = "firstName= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
 	window.location.href = "index.html";
 }
 
+const USERNAME_REGEX = /^(?=.*[a-zA-Z])[a-zA-Z0-9-_]{3,18}$/;
+const PASSWORD_REGEX = /^(?=.*\d)(?=.*[A-Za-z])(?=.*[!@#$%^&*]).{8,32}$/;
+const PHONE_REGEX = /^[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4}$/;
+const EMAIL_REGEX = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
+
+function validLoginForm(username, password) {
+
+    if (!username.trim()) {
+        return "* Username is required.";
+    }
+
+    if (!USERNAME_REGEX.test(username)) {
+        return "* Username must be 3–18 characters and contain at least one letter.";
+    }
+
+    if (!password) {
+        return "* Password is required.";
+    }
+
+    if (!PASSWORD_REGEX.test(password)) {
+        return "* Password format is invalid.";
+    }
+
+    return  null;
+}
+
+
+function validSignUpForm(firstName, lastName, username, password) {
+
+    if (!firstName.trim()) {
+        return "* First name is required.";
+    }
+
+    if (!lastName.trim()) {
+        return "* Last name is required.";
+    }
+
+    if (!username.trim()) {
+        return "* Username is required.";
+    }
+
+    if (!USERNAME_REGEX.test(username)) {
+        return "* Username must be 3–18 characters and contain at least one letter.";
+    }
+
+    if (!password) {
+        return "* Password is required.";
+    }
+
+    if (!PASSWORD_REGEX.test(password)) {
+        return "* Password must be 8–32 characters and include a letter, number, and symbol.";
+    }
+
+    return null;
+}
 
 function addContact()
 {
