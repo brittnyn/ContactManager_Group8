@@ -180,7 +180,46 @@
     addContactIcon.addEventListener('click', toggleAddContactForm);
 
     function addContact(name, phone, email) 
-    {
+
+
+    {   
+        // This is for if the user tries to add an empty contact, return without adding
+        if (!name || !phone || !email) {
+            alert("All fields are required!");
+            return;
+        }
+        
+        // This is for if the user tries to add a duplicate contact, return without adding
+        if (contacts.some(contact => contact[0] === name && contact[1] === phone && contact[2] === email)) {
+            alert("This contact already exists!");
+            return;
+        }
+
+
+        // using regex to check if name contains numbers
+        if (/\d/.test(name)) {
+            alert("Name cannot contain numbers.");
+            return;
+        }
+
+        // using regex to check if email is valid
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert("Invalid email format.");
+            return;
+        }
+
+        // making sure name is a valid length
+        if (name.length < 3 || name.length > 30) {
+            alert("Name must be at least 3 characters long.");
+            return;
+        }
+
+        // making sure phone number is a valid length, (10 for US numbers)
+        if(phone.length < 10 || phone.length > 10) {
+            alert("Phone number must be 10 digits.");
+            return;
+        }
+
         contacts.push([name, phone, email]);
     }
 
