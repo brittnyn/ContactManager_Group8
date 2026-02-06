@@ -323,6 +323,7 @@ function validSignUpForm(firstName, lastName, username, password) {
     return null;
 }
 
+
 function addContact()
 {
 	let first = document.getElementById("firstName").value;
@@ -330,6 +331,13 @@ function addContact()
 	let email = document.getElementById("email").value;
 	let phone = document.getElementById("phone").value;
 
+	let error = validContactInfo(first, last, email, phone);
+	if (error) 
+	{
+    	document.getElementById("contactAddResult").innerText = error;
+    	return;
+	}
+ 
 	let tmp = { firstName: first, lastName: last, email: email, phone: phone, userId: userId };
 	let jsonPayload = JSON.stringify(tmp);
 	let url = urlBase + '/AddContact.' + extension;
@@ -459,4 +467,40 @@ function deleteContact(index)
 		}
 	};
 	xhr.send(jsonPayload);
+
+}
+function validContactInfo(fistnName, lastName, phone, email)
+{
+	if (!firstName.trim()) 
+	{
+        return "* First name is required.";
+    }
+
+    if (!lastName.trim()) 
+	{
+        return "* Last name is required.";
+    }
+
+    if (!phone.trim()) 
+	{
+        return "* Phone number is required.";
+    }
+
+    if (!PHONE_REGEX.test(phone)) 
+	{
+        return "* Phone number must be in standard 10 digit format.";
+    }
+
+    if (!email.trim()) 
+	{
+        return "* Email is required.";
+    }
+
+    if (!EMAIL_REGEX.test(email)) 
+	{
+        return "*Email must follow standard format.";
+    }
+
+    return null;
+
 }
