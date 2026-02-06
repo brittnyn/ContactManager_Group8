@@ -331,7 +331,7 @@ function addContact()
 	let email = document.getElementById("email").value;
 	let phone = document.getElementById("phone").value;
 
-	let error = validContactInfo(first, last, email, phone);
+	let error = validContactInfo(first, last, phone, email);
 	if (error) 
 	{
     	document.getElementById("contactAddResult").innerText = error;
@@ -469,7 +469,7 @@ function deleteContact(index)
 	xhr.send(jsonPayload);
 
 }
-function validContactInfo(fistnName, lastName, phone, email)
+function validContactInfo(firstName, lastName, phone, email)
 {
 	if (!firstName.trim()) 
 	{
@@ -504,3 +504,4 @@ function validContactInfo(fistnName, lastName, phone, email)
     return null;
 
 }
+
