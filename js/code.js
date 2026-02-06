@@ -126,10 +126,8 @@ function doLogin()
 				document.getElementById("loginResult").innerText = "Logging in...";
                 
 				setTimeout(() => {
-  						console.log("Delaying");
+  						window.location.href = "contact.html";
 				}, 2000);
-
-				window.location.href = "contact.html";
 			}
 		};
 		xhr.send(jsonPayload);
@@ -142,8 +140,9 @@ function doLogin()
 
 function doRegister() 
 {
-    firstName = document.getElementById("regFirst").value;
-    lastName = document.getElementById("regLast").value;
+    let firstName = document.getElementById("regFirst").value;
+    let lastName = document.getElementById("regLast").value;
+	
 
     let username = document.getElementById("regUser").value;
     let password = document.getElementById("regPassword").value;
@@ -157,7 +156,6 @@ function doRegister()
 	}
  
     var hash = md5(password);
-    saveCookie();
 
     let tmp = 
 	{
@@ -170,23 +168,28 @@ function doRegister()
     let jsonPayload = JSON.stringify(tmp);
 
     let url = urlBase + '/Register.' + extension;
+	
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
 
     try {
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function () 
+		{
 
-            if (this.readyState != 4) {
+            if (this.readyState != 4) 
+			{
                 return;
             }
 
-            if (this.status == 409) {
+            if (this.status == 409) 
+			{
                 document.getElementById("registerResult").innerHTML = "Username Already Exists";
                 return;
             }
 
-            if (this.status == 200) {
+            if (this.status == 200) 
+			{
 
                 let jsonObject = JSON.parse(xhr.responseText);
                 userId = jsonObject.id;
@@ -196,14 +199,14 @@ function doRegister()
 				document.getElementById("registerResult").innerText = "Account created! Logging in...";
                 saveCookie();
 				setTimeout(() => {
-  						console.log("Delaying");
+  						window.location.href = "contact.html";
 				}, 2000);
-				window.location.href = "contact.html";
             }
         };
 
         xhr.send(jsonPayload);
-    } catch (err) {
+    } catch (err) 
+	{
         document.getElementById("registerResult").innerHTML = err.message;
     }
 }
@@ -263,17 +266,21 @@ const PASSWORD_REGEX = /^(?=.*\d)(?=.*[A-Za-z])(?=.*[!@#$%^&*]).{8,32}$/;
 const PHONE_REGEX = /^[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4}$/;
 const EMAIL_REGEX = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
 
-function validLoginForm(username, password) {
+function validLoginForm(username, password) 
+{
 
-    if (!username.trim()) {
+    if (!username.trim()) 
+	{
         return "* Username is required.";
     }
 
-    if (!USERNAME_REGEX.test(username)) {
+    if (!USERNAME_REGEX.test(username)) 
+	{
         return "* Username must be 3–18 characters and contain at least one letter.";
     }
 
-    if (!password) {
+    if (!password) 
+		{
         return "* Password is required.";
     }
 
@@ -283,27 +290,33 @@ function validLoginForm(username, password) {
 
 function validSignUpForm(firstName, lastName, username, password) {
 
-    if (!firstName.trim()) {
+    if (!firstName.trim()) 
+	{
         return "* First name is required.";
     }
 
-    if (!lastName.trim()) {
+    if (!lastName.trim()) 
+	{
         return "* Last name is required.";
     }
 
-    if (!username.trim()) {
+    if (!username.trim()) 
+	{
         return "* Username is required.";
     }
 
-    if (!USERNAME_REGEX.test(username)) {
+    if (!USERNAME_REGEX.test(username)) 
+	{
         return "* Username must be 3–18 characters and contain at least one letter.";
     }
 
-    if (!password) {
+    if (!password) 
+	{
         return "* Password is required.";
     }
 
-    if (!PASSWORD_REGEX.test(password)) {
+    if (!PASSWORD_REGEX.test(password)) 
+	{
         return "* Password must be 8–32 characters and include a letter, number, and symbol.";
     }
 
