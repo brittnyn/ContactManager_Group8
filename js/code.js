@@ -4,13 +4,13 @@ const extension = 'php';
 let userId = 0;
 let firstName = "";
 let lastName = "";
+let contacts = [];
 const ids = []
 
 // Switch between Login and Register Boxes
 var log = document.querySelector('.loginBox');
 var reg = document.querySelector('.registerBox');
 var but = document.getElementById('switchButton');
-
 
 function switchToLogin()
 {

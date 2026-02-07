@@ -1,50 +1,85 @@
-<!-- A little confused on this file, if we contacts.html. Maybe we can merge them? -->
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>GOcean Contact Manager</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Marmoris Contact Manager</title>
 	<link href="css/styles.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+	<link href="css/animation.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<script src="js/code.js" defer></script>
+	<script src="js/animation.js" defer></script>
 </head>
-<body>
+<body class="contactPage">
+	<!-- Background Animation -->
+	<div class="contactBackground" id="contactBackground">
+		<div class="bubbles"></div>
+	</div>
 
-<h1 id="title">GOcean Contact Manager</h1>
+	<div class="contactWrapper">
+		<!-- Header -->
+		<header class="contactHeader">
+			<div class="headerContent">
+				<h1 class="contactTitle">Marmoris Contact Manager</h1>
+				<div class="headerActions">
+					<span class="userInfo">Welcome, <span id="userName" class="userName">User</span></span>
+					<button type="button" class="logoutBtn" onclick="doLogout();">
+						<i class="fas fa-sign-out-alt"></i> Log Out
+					</button>
+				</div>
+			</div>
+		</header>
 
+		<!-- Main Content -->
+		<main class="contactMain">
+			<!-- Search Section -->
+			<section class="contactCard searchCard">
+				<h2><i class="fas fa-search"></i> Find Contacts</h2>
+				<div class="searchContainer">
+					<input type="text" id="searchText" class="searchInput" placeholder="Search by name..."/>
+					<button type="button" class="searchBtn" onclick="searchContacts();">
+						<i class="fas fa-search"></i> Search
+					</button>
+				</div>
+			</section>
 
-<div id="loggedInDiv">
-	Logged in as: <span id="userName"></span><br>
-	<button type="button" class="buttons" onclick="doLogout();">Log Out</button>
-</div>
-<hr>
+			<!-- Results Section -->
+			<section class="contactCard resultsCard">
+				<h2><i class="fas fa-list"></i> Your Contacts</h2>
+				<div id="contactResults" class="resultsList"></div>
+			</section>
 
+			<!-- Add Contact Section -->
+			<section class="contactCard addCard">
+				<h2><i class="fas fa-plus-circle"></i> Add New Contact</h2>
+				<form class="addForm" onsubmit="event.preventDefault(); addContact();">
+					<div class="formGrid">
+						<div class="formField">
+							<input type="text" id="firstName" class="formInput" placeholder="First Name" required/>
+						</div>
+						<div class="formField">
+							<input type="text" id="lastName" class="formInput" placeholder="Last Name" required/>
+						</div>
+						<div class="formField">
+							<input type="email" id="email" class="formInput" placeholder="Email Address" required/>
+						</div>
+						<div class="formField">
+							<input type="tel" id="phone" class="formInput" placeholder="Phone Number" required/>
+						</div>
+					</div>
+					<button type="submit" class="addBtn">
+						<i class="fas fa-plus"></i> Add Contact
+					</button>
+				</form>
+			</section>
 
-<div id="searchDiv">
-	<input type="text" id="searchText" placeholder="Search for contact"/>
-	<button type="button" class="buttons" onclick="searchContacts();">Search</button>
-</div>
-<br>
-<div id="contactResults"></div>
-<hr>
-
-
-<div id="addDiv">
-	<input type="text" id="firstName" placeholder="First Name">
-	<input type="text" id="lastName" placeholder="Last Name">
-	<input type="text" id="email" placeholder="Email">
-	<input type="text" id="phone" placeholder="Phone">
-	<button type="button" class="buttons" onclick="addContact();">Add Contact</button>
-</div>
-
-<br>
-
-
-<div id="statusMessages">
-	<span id="contactAddResult"></span>
-	<span id="contactEditResult"></span>
-	<span id="contactDeleteResult"></span>
-</div>
-
+			<!-- Status Messages -->
+			<div id="statusMessages" class="statusContainer">
+				<span id="contactAddResult" class="statusMsg"></span>
+				<span id="contactEditResult" class="statusMsg"></span>
+				<span id="contactDeleteResult" class="statusMsg"></span>
+			</div>
+		</main>
+	</div>
 </body>
 </html>
