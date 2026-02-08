@@ -411,6 +411,7 @@ function renderContacts()
 
 function saveEdit(index)
 {
+	
 	let edited = {
 		firstName: document.getElementById(`first-${index}`).value,
 		lastName: document.getElementById(`last-${index}`).value,
@@ -418,6 +419,13 @@ function saveEdit(index)
 		phone: document.getElementById(`phone-${index}`).value,
 		userId: userId
 	};
+
+	let error = validContactInfo(edited.firstName, edited.lastName, edited.phone, edited.email);
+	if (error) 
+	{
+    	document.getElementById("contactEditResult").innerText = error;
+    	return;
+	}
 	let jsonPayload = JSON.stringify(edited);
 	let url = urlBase + '/EditContact.' + extension;
 
@@ -504,4 +512,5 @@ function validContactInfo(firstName, lastName, phone, email)
     return null;
 
 }
+
 
