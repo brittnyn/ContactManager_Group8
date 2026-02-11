@@ -17,6 +17,8 @@ Add a logo for the website. Open clam shell with pearl inside.
 
 - Check lighthouse score. Will text to speech through google work on the website?
 
+- Swaggerhub for api
+
 Implement the following:
 1. "Your contacts" list view for logged in user
 2. Search contact for that user
