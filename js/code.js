@@ -209,7 +209,8 @@ function doRegister()
             }
 
             if (this.status == 200) 
-			{
+			{	
+				boxDiv.style.minHeight = "720px";
 
                 let jsonObject = JSON.parse(xhr.responseText);
                 userId = jsonObject.id;
@@ -286,6 +287,175 @@ const PASSWORD_REGEX = /^(?=.*\d)(?=.*[A-Za-z])(?=.*[!@#$%^&*]).{8,32}$/;
 const PHONE_REGEX = /^[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4}$/;
 const EMAIL_REGEX = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
 
+// Individual pattern checks
+const PATTERNS = {
+    letter: /[a-zA-Z]/,
+    number: /\d/,
+    symbol: /[!@#$%^&*]/,
+    underscore: /_/,
+    hyphen: /-/
+};
+
+const boxDiv = document.getElementById("box");
+const regUser = document.getElementById("regUser");
+const regPassword = document.getElementById("regPassword");
+const explanationUser = document.getElementById("explanationUser");
+const explanationPassword = document.getElementById("explanationPassword");
+
+// Username requirement elements
+const userLett = document.getElementById("userLett");
+const userLen = document.getElementById("userLen");
+const userNum = document.getElementById("userNum");
+const userUnd = document.getElementById("userUnd");
+const userHyp = document.getElementById("userHyp");
+
+// Password requirement elements
+const passLett = document.getElementById("passLett");
+const passNum = document.getElementById("passNum");
+const passSymb = document.getElementById("passSymb");
+const passLen = document.getElementById("passLen");
+
+const ORIGINAL_HEIGHT = "720px";
+const EXPAND_HEIGHT = "860px";
+
+regUser.onfocus = function() 
+{
+    explanationUser.style.display = "block";
+    boxDiv.style.minHeight = EXPAND_HEIGHT;
+	document.getElementById("registerResult").textContent = "";
+};
+
+regUser.onblur = function() 
+{
+    explanationUser.style.display = "none";
+    if (!regPassword.matches(':focus')) {
+        boxDiv.style.minHeight = ORIGINAL_HEIGHT;
+    }
+};
+
+regPassword.onfocus = function() 
+{
+    explanationPassword.style.display = "block";
+    boxDiv.style.minHeight = EXPAND_HEIGHT;
+    document.getElementById("registerResult").textContent = "";
+};
+
+regPassword.onblur = function() 
+{
+    explanationPassword.style.display = "none";
+    if (!regUser.matches(':focus')) {
+        boxDiv.style.minHeight = ORIGINAL_HEIGHT;
+    }
+};
+
+// Immediate username validation
+regUser.oninput = function() 
+{
+    const value = regUser.value;
+    
+    if (PATTERNS.letter.test(value)) 
+	{
+        userLett.classList.remove("invalid");
+        userLett.classList.add("valid");
+    } 
+	else 
+	{
+        userLett.classList.remove("valid");
+        userLett.classList.add("invalid");
+    }
+    
+    if (value.length >= 3 && value.length <= 18) 
+	{
+        userLen.classList.remove("invalid");
+        userLen.classList.add("valid");
+    } 
+	else 
+	{
+        userLen.classList.remove("valid");
+        userLen.classList.add("invalid");
+    }
+    
+    if (PATTERNS.number.test(value)) 
+	{
+        userNum.classList.remove("opt");
+        userNum.classList.add("valid");
+    } 
+	else 
+	{
+        userNum.classList.remove("valid");
+        userNum.classList.add("opt");
+    }
+    
+    if (PATTERNS.underscore.test(value)) 
+	{
+        userUnd.classList.remove("opt");
+        userUnd.classList.add("valid");
+    } 
+	else 
+	{
+        userUnd.classList.remove("valid");
+        userUnd.classList.add("opt");
+    }
+    
+    if (PATTERNS.hyphen.test(value)) 
+	{
+        userHyp.classList.remove("opt");
+        userHyp.classList.add("valid");
+    } 
+	else 
+	{
+        userHyp.classList.remove("valid");
+        userHyp.classList.add("opt");
+    }
+};
+
+// Immediate password validation
+regPassword.oninput = function() 
+{
+    const value = regPassword.value;
+    
+    if (PATTERNS.letter.test(value)) 
+	{
+        passLett.classList.remove("invalid");
+        passLett.classList.add("valid");
+    } 
+	else 
+	{
+        passLett.classList.remove("valid");
+        passLett.classList.add("invalid");
+    }
+    
+    if (PATTERNS.number.test(value))
+	{
+        passNum.classList.remove("invalid");
+        passNum.classList.add("valid");
+    } 
+	else 
+	{
+        passNum.classList.remove("valid");
+        passNum.classList.add("invalid");
+    }
+    
+    if (PATTERNS.symbol.test(value)) 
+	{
+        passSymb.classList.remove("invalid");
+        passSymb.classList.add("valid");
+    } 
+	else
+	{
+        passSymb.classList.remove("valid");
+        passSymb.classList.add("invalid");
+    }
+    
+    if (value.length >= 8 && value.length <= 32) {
+        passLen.classList.remove("invalid");
+        passLen.classList.add("valid");
+    } else {
+        passLen.classList.remove("valid");
+        passLen.classList.add("invalid");
+    }
+}
+
 function validLoginForm(username, password) 
 {
 
@@ -308,7 +478,8 @@ function validLoginForm(username, password)
 }
 
 
-function validSignUpForm(firstName, lastName, username, password, repeat) {
+function validSignUpForm(firstName, lastName, username, password, repeat) 
+{
 
     if (!firstName.trim()) 
 	{

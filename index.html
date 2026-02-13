@@ -72,7 +72,7 @@
 								</div>
 							</div>
 						</div>
-						<!-- Register Box-->
+						<!-- Register Box -->
 						<div class="registerBox">
 							<div id="boxHeader">
 								<h3>Sign Up</h3>
@@ -105,7 +105,7 @@
 								</div>
 								<div class="inputDiv">
 									<input type="password" class="inputField" id="regRepeatPass" autocomplete="off" required>
-									<label for="regPassword">Repeat Password</label>
+									<label for="regPassword">Confirm Password</label>
 								</div>
 								<div class="showPassword">
 									<div id="eyeDiv">
@@ -120,7 +120,26 @@
 									<span id="registerResult" class="errorMsg"></span> 
 								</div>
 							</div>
-						</div> 
+							<!-- Username Requirements Message -->
+							<div id="explanationUser" class="requirementsBox">
+								<h3>Username must contain:</h3>
+								<p id="userLett" class="invalid"><span class="icon"></span> At least one letter</p>
+								<p id="userLen" class="invalid"><span class="icon"></span> 3 to 18 characters</p>
+								<h3>Username may contain:</h3>
+								<p id="userNum" class="opt"><span class="icon"></span> Numbers</p>
+								<p id="userUnd" class="opt"><span class="icon"></span> Underscores</p>
+								<p id="userHyp" class="opt"><span class="icon"></span> Hyphens</p>
+							</div>
+							<!-- Password Requirements Message -->
+							<div id="explanationPassword" class="requirementsBox">
+								<h3>Password must contain:</h3>
+								<p id="passLett" class="invalid"><span class="icon"></span> At least one letter</p>
+								<p id="passNum" class="invalid"><span class="icon"></span> At least one number</p>
+								<p id="passSymb" class="invalid"><span class="icon"></span> At least one symbol (!@#$%^&*)</p>
+								<p id="passLen" class="invalid"><span class="icon"></span> 8 to 32 characters</p>
+							</div>
+						</div>
+						<div id="errorMessage" class="error-message"></div>
 					</div>
 					<!--Switch between Login and Register Boxes -->
 					<div id="switchBox" aria-label="Navigation">

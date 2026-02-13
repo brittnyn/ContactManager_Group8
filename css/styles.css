@@ -35,7 +35,7 @@ body
     display: flex;
     flex-direction: column;
     width: 350px;
-    min-height: 710px;
+    min-height: 720px;
     height: auto;
     padding: 60px 20px 30px 20px;
     background: rgba(145, 197, 221, 0.12);
@@ -43,8 +43,8 @@ body
     border-radius: 30px;
     backdrop-filter: blur(15px);
     border: 2px solid rgba(84, 165, 213, 0.3);
+    transition: min-height 0.6s ease, height 0.6s ease;
     overflow: hidden;
-    transition: .6s;
 }
 
 .formViewport {
@@ -154,6 +154,75 @@ body
     transform: scale(1.05, 1);
 }
 
+.requirementsBox {
+    display: none;
+    position: relative;
+    margin-top: 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(84, 165, 213, 0.2);
+    font-size: 13px;
+}
+
+.requirementsBox h3 {
+    color: #e0f7ff;
+    font-size: 14px;
+    margin: 10px 0 8px 0;
+    font-weight: 600;
+}
+
+.requirementsBox p {
+    margin: 6px 0;
+    padding-left: 5px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+.requirementsBox .icon {
+    display: inline-block;
+    width: 20px;
+    margin-right: 8px;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.requirementsBox .invalid
+{
+    color: #ff6b6b;
+}
+.requirementsBox .invalid .icon {
+    color: #ff6b6b;
+}
+
+.requirementsBox .invalid .icon::before {
+    content: "✗";
+}
+
+.requirementsBox .valid {
+    color: #51cf66;
+}
+
+.requirementsBox .valid .icon {
+    color: #51cf66;
+}
+
+.requirementsBox .valid .icon::before {
+    content: "✓";
+}
+
+.requirementsBox .opt {
+    color: #ecebeb;
+}
+
+.requirementsBox .opt .icon {
+    color: #ecebeb;
+}
+
+.requirementsBox .opt .icon::before {
+    content: "○";
+}
 #eyeDiv 
 {
     position: relative;
@@ -230,15 +299,19 @@ i
 .errorMsg
 {
     display: block;
-    width: 100%;
+    margin: 15px;
+    padding: 5px;
+    color: #ff6b6b;
     text-align: center;
-    color: #ff6565;
-    padding: 10px;
-    font-weight:bold;
-    -webkit-text-stroke-width: 0.5px;
-    -webkit-text-stroke-color: rgb(151, 8, 8);
+    font-size: 14px;
+    border-radius: 8px;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
 }
-
+.errorMsg:empty
+{
+    display:none;
+}
 /* ========== CONTACT PAGE STYLING ========== */
 
 body.contactPage {
