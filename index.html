@@ -67,8 +67,7 @@
 									</div>
 								</div>
 								<div class="buttonDiv">
-									<button type="button" id="loginButton" onclick="doLogin();"></button>
-									<label for="loginButton">Log In</label>
+									<button type="button" id="loginButton" onclick="doLogin();">Log In</button>
 									<span id="loginResult" class="errorMsg"></span>
 								</div>
 							</div>
@@ -77,7 +76,7 @@
 						<div class="registerBox">
 							<div id="boxHeader">
 								<h3>Sign Up</h3>
-								<small>Thank you for joining!</small>
+								<small>Thank You for Joining!</small>
 							</div>
 							<div id="groupDiv">
 								<div class="inputDiv">
@@ -104,9 +103,20 @@
 										</div>
 									</div>
 								</div>
+								<div class="inputDiv">
+									<input type="password" class="inputField" id="regRepeatPass" autocomplete="off" required>
+									<label for="regPassword">Repeat Password</label>
+								</div>
+								<div class="showPassword">
+									<div id="eyeDiv">
+										<div class="eyeBox" onclick="toggleRegRepeat();" aria-label="Show password" role="button">
+											<i class ="fa-regular fa-eye" id="eye-3"></i>
+											<i class ="fa-regular fa-eye-slash" id="eyeSlash-3"></i>
+										</div>
+									</div>
+								</div>
 								<div class="buttonDiv">
-									<button type="button" id="registerButton" onclick="doRegister();"></button>
-									<label for="registerButton">Register</label>
+									<button type="button" id="registerButton" onclick="doRegister();">Register</button>
 									<span id="registerResult" class="errorMsg"></span> 
 								</div>
 							</div>

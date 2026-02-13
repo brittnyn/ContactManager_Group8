@@ -1,13 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 *
 {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Funnel Sans", sans-serif;
+    font-optical-sizing: auto;
 }
 
+/* ========== LOGIN PAGE STYLING ========== */
 body 
 {
     display: flex;
@@ -33,14 +35,14 @@ body
     display: flex;
     flex-direction: column;
     width: 350px;
-    min-height: 620px;
+    min-height: 710px;
     height: auto;
     padding: 60px 20px 30px 20px;
-    background-color: #91c5dd;
+    background: rgba(145, 197, 221, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     border-radius: 30px;
-    -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
-    border: 3px solid rgba(225, 220, 220, 0.2);
+    border: 2px solid rgba(84, 165, 213, 0.3);
     overflow: hidden;
     transition: .6s;
 }
@@ -70,7 +72,7 @@ body
 {
     text-align: center;
     margin-bottom: 30px;
-
+    color: #e0f7ff;
 }
 
 #boxHeader h3
@@ -91,12 +93,12 @@ body
     width: 100%;
     height: 50px;
     font-size: 15px;
-    color: #040404;
+    color: #e0f7ff;
     border-radius: 30px;
-    border: none;
+    border: 2px solid rgba(84, 165, 213, 0.4);
     padding: 7px 45px 0 25px;
     outline: none;
-    background: rgba(239, 231, 231, 0.9);
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2px);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -104,7 +106,9 @@ body
 .inputField:focus 
 {
     transform: scale(1.05);
-    box-shadow: 0 0 0 3px rgba(102, 55, 138, 0.35);
+    border-color: #54a5d5;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(84, 165, 213, 0.3)
 }
 
 .inputDiv label
@@ -113,53 +117,41 @@ body
     top: -35px;
     left: 20px;
     font-size: 16px;
+    font-weight: 500;
     transition: .3s ease-in-out;
+    cursor: text;
+    color:white;
 }
 
 .inputField:focus ~label, .inputField:valid ~label 
 {
-    top: -45px;
+    top: -50px;
+    right: 5px;
     font-size: 10px;
-    color: #2849c1;
-    font-weight: 600;
+    color: white;
+    font-weight: 500;
 }
 
 #loginButton, #registerButton
 {
     width: 100%;
-    height: 50px;
-    background: rgba(42,71,128,0.8);
+    padding: 18px 45px;
+    background: linear-gradient(135deg, #54a5d5, #3d85b3);
+    box-shadow: 0 4px 15px rgba(84, 165, 213, 0.4);
+    color: white;
     border: none;
     border-radius: 30px;
     cursor: pointer;
-    transition: .3s;
-    color: transparent;
     position: relative;
-    margin-top: 10px;
-}
-
-#loginButton label
-{
-    right: 100px
+    font-weight: 600;
+    font-size: 15px;
+    align-items: center;
+    transition: .3s;
 }
 
 #loginButton:hover, #registerButton:hover
 {
-    background-color: rgba(42,71,128,0.9);
     transform: scale(1.05, 1);
-}
-
-.buttonDiv label
-{
-    position: relative;
-    left: 118px;
-    bottom: 39px;
-    color: #fff;
-}
-
-.buttonDiv:hover label 
-{
-    cursor:pointer;
 }
 
 #eyeDiv 
@@ -181,16 +173,16 @@ body
 i
 {
     position: absolute;
-    color: #444;
+    color: #214255;
     cursor: pointer;
 }
 
-#eye, #eye-2
+#eye, #eye-2, #eye-3
 {
     opacity: 1;
 }
 
-#eyeSlash, #eyeSlash-2
+#eyeSlash, #eyeSlash-2, #eyeSlash-3
 {
     opacity: 0;
 }
@@ -200,14 +192,13 @@ i
     display: flex;
     position: relative;
     margin-top: auto;
-    left: 10px;
-    width: 95%;
+    width: 100%;
     height: 50px;
     background: rgba(244, 246, 246, 0.6);
     backdrop-filter: blur(10px);
+    border: 2px solid rgba(84, 165, 213);
     border-radius: 30px;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
@@ -221,20 +212,19 @@ i
     color: #000;
     text-decoration: none;
     width: 50%;
-    border-radius: 10px;
+    border-radius: 30px;
     z-index: 10;
 }
 
 #switchButton
 {
     position: absolute;
-    width: 140px;
+    width: 155px;
     height: 50px;
-    background-color: rgba(84,165,213,0.8);
+    background: linear-gradient(135deg, #54a5d5, #3d85b3);
+    box-shadow: 0 4px 15px rgba(84, 165, 213, 0.4);
     border-radius: 30px;
-    box-shadow: 2px 0px 12px rgb(56,146,198);
     transition: .3s ease-in-out;
-    font-family: 'Poppins';
 }
 
 .errorMsg
@@ -242,9 +232,11 @@ i
     display: block;
     width: 100%;
     text-align: center;
-    color: rgb(203, 55, 21);
-    font-family: 'Poppins';
-    margin-top: -10px;
+    color: #ff6565;
+    padding: 10px;
+    font-weight:bold;
+    -webkit-text-stroke-width: 0.5px;
+    -webkit-text-stroke-color: rgb(151, 8, 8);
 }
 
 /* ========== CONTACT PAGE STYLING ========== */
@@ -433,7 +425,7 @@ body.contactPage {
     gap: 8px;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(84, 165, 213, 0.4);
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Funnel Sans', sans-serif;
 }
 
 .searchBtn:hover {
@@ -474,7 +466,7 @@ body.contactPage {
     background: rgba(255, 255, 255, 0.08);
     color: #e0f7ff;
     font-size: 13px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Funnel Sans', sans-serif;
     outline: none;
     transition: all 0.3s ease;
 }
@@ -499,7 +491,7 @@ body.contactPage {
     font-weight: 600;
     font-size: 12px;
     transition: all 0.3s ease;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Funnel Sans', sans-serif;
     color: white;
 }
 
@@ -548,7 +540,7 @@ body.contactPage {
     font-size: 14px;
     outline: none;
     transition: all 0.3s ease;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Funnel Sans', sans-serif;
 }
 
 .formInput::placeholder {
@@ -576,7 +568,7 @@ body.contactPage {
     gap: 10px;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(84, 165, 213, 0.4);
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Funnel Sans', sans-serif;
 }
 
 .addBtn:hover {

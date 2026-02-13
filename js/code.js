@@ -73,6 +73,25 @@ function toggleRegPassword(){
 	}
 }
 
+function toggleRegRepeat(){
+	var passwordField = document.getElementById("regRepeatPass");
+	var eyeIcon = document.getElementById("eye-3");
+	var eyeSlashIcon = document.getElementById("eyeSlash-3");
+
+	if(passwordField.type === "password")
+	{
+		passwordField.type = "text";
+		eyeIcon.style.opacity = 0;
+		eyeSlashIcon.style.opacity = 1;
+	}
+	else
+	{
+		passwordField.type = "password";
+		eyeIcon.style.opacity = 1;
+		eyeSlashIcon.style.opacity = 0;
+	}
+}
+
 function doLogin()
 {
 	userId = 0;
@@ -127,7 +146,7 @@ function doLogin()
                 
 				setTimeout(() => {
   						window.location.href = "contact.html";
-				}, 2000);
+				}, 1000);
 			}
 		};
 		xhr.send(jsonPayload);
@@ -146,8 +165,9 @@ function doRegister()
 
     let username = document.getElementById("regUser").value;
     let password = document.getElementById("regPassword").value;
+	let repeat = document.getElementById("regRepeatPass").value;
 
-	let error = validSignUpForm(firstName, lastName, username, password);
+	let error = validSignUpForm(firstName, lastName, username, password, repeat);
 
 	if (error) 
 	{
@@ -200,7 +220,7 @@ function doRegister()
                 saveCookie();
 				setTimeout(() => {
   						window.location.href = "contact.html";
-				}, 2000);
+				}, 1000);
             }
         };
 
@@ -288,7 +308,7 @@ function validLoginForm(username, password)
 }
 
 
-function validSignUpForm(firstName, lastName, username, password) {
+function validSignUpForm(firstName, lastName, username, password, repeat) {
 
     if (!firstName.trim()) 
 	{
@@ -318,6 +338,11 @@ function validSignUpForm(firstName, lastName, username, password) {
     if (!PASSWORD_REGEX.test(password)) 
 	{
         return "* Password must be 8–32 characters and include a letter, number, and symbol.";
+    }
+
+	if (password != repeat) 
+	{
+        return "* Passwords do not match.";
     }
 
     return null;
