@@ -12,6 +12,7 @@
 	} 
 	else
 	{
+		// Scope search strictly to the logged-in user's contacts.
 		$stmt = $conn->prepare("select * from Contacts where (FirstName like ? OR LastName like ?) and UserID=?");
 		$searchName = "%" . $inData["search"] . "%";
 		$stmt->bind_param("sss", $searchName, $searchName, $inData["userId"]);
@@ -26,8 +27,8 @@
 				$searchResults .= ",";
 			}
 			$searchCount++;
-			// This returns a JSON object for each contact
-			$searchResults .= '{"FirstName" : "' . $row["FirstName"] . '", "LastName" : "' . $row["LastName"] . '", "Phone" : "' . $row["Phone"] . '", "Email" : "' . $row["Email"] . '"}';
+			// Return lower-camel-case keys to match frontend JS usage.
+			$searchResults .= '{"id" : "' . $row["ID"] . '", "firstName" : "' . $row["FirstName"] . '", "lastName" : "' . $row["LastName"] . '", "phone" : "' . $row["Phone"] . '", "email" : "' . $row["Email"] . '"}';
 		}
 		
 		if( $searchCount == 0 )

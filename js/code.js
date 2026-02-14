@@ -274,6 +274,11 @@ function readCookie()
 	else
 	{
 		document.getElementById("userName").innerHTML = firstName + " " + lastName;
+		// If we're on the contacts page, load this user's contacts immediately.
+		if (document.getElementById("contactResults"))
+		{
+			searchContacts();
+		}
 	}
 }
 
@@ -322,40 +327,43 @@ const passLen = document.getElementById("passLen");
 const ORIGINAL_HEIGHT = "720px";
 const EXPAND_HEIGHT = "860px";
 
+// Guard register-only UI bindings so contact page script execution doesn't fail.
+if (regUser && regPassword && explanationUser && explanationPassword && boxDiv)
+{
 regUser.onfocus = function() 
 {
-    explanationUser.style.display = "block";
-    boxDiv.style.minHeight = EXPAND_HEIGHT;
+	explanationUser.style.display = "block";
+	boxDiv.style.minHeight = EXPAND_HEIGHT;
 	document.getElementById("registerResult").textContent = "";
 };
 
 regUser.onblur = function() 
 {
-    explanationUser.style.display = "none";
-    if (!regPassword.matches(':focus')) {
-        boxDiv.style.minHeight = ORIGINAL_HEIGHT;
-    }
+	explanationUser.style.display = "none";
+	if (!regPassword.matches(':focus')) {
+		boxDiv.style.minHeight = ORIGINAL_HEIGHT;
+	}
 };
 
 regPassword.onfocus = function() 
 {
-    explanationPassword.style.display = "block";
-    boxDiv.style.minHeight = EXPAND_HEIGHT;
-    document.getElementById("registerResult").textContent = "";
+	explanationPassword.style.display = "block";
+	boxDiv.style.minHeight = EXPAND_HEIGHT;
+	document.getElementById("registerResult").textContent = "";
 };
 
 regPassword.onblur = function() 
 {
-    explanationPassword.style.display = "none";
-    if (!regUser.matches(':focus')) {
-        boxDiv.style.minHeight = ORIGINAL_HEIGHT;
-    }
+	explanationPassword.style.display = "none";
+	if (!regUser.matches(':focus')) {
+		boxDiv.style.minHeight = ORIGINAL_HEIGHT;
+	}
 };
 
 // Immediate username validation
 regUser.oninput = function() 
 {
-    const value = regUser.value;
+	const value = regUser.value;
     
     if (PATTERNS.letter.test(value)) 
 	{
@@ -459,6 +467,7 @@ regPassword.oninput = function()
         passLen.classList.add("invalid");
     }
 }
+}
 
 function validLoginForm(username, password) 
 {
@@ -551,10 +560,29 @@ function addContact()
 		if (this.readyState === 4 && this.status === 200)
 		{
 			document.getElementById("contactAddResult").innerHTML = "Contact added";
+			// Clear inputs after a successful create.
+			document.getElementById("firstName").value = "";
+			document.getElementById("lastName").value = "";
+			document.getElementById("email").value = "";
+			document.getElementById("phone").value = "";
+			// Refresh list so the new contact appears in "Your Contacts".
 			searchContacts();
 		}
 	};
 	xhr.send(jsonPayload);
+}
+
+// Normalize mixed backend key styles (firstName vs FirstName, etc.)
+// so rendering logic can use a single object shape.
+function normalizeContact(c)
+{
+	return {
+		id: c.id ?? c.ID ?? null,
+		firstName: c.firstName ?? c.FirstName ?? "",
+		lastName: c.lastName ?? c.LastName ?? "",
+		email: c.email ?? c.Email ?? "",
+		phone: c.phone ?? c.Phone ?? ""
+	};
 }
 
 
@@ -562,7 +590,8 @@ function searchContacts()
 {
 	let search = document.getElementById("searchText").value;
 	document.getElementById("contactResults").innerHTML = "";
-	document.getElementById("contactSearchResult").innerHTML = "";
+	document.getElementById("contactEditResult").innerHTML = "";
+	document.getElementById("contactDeleteResult").innerHTML = "";
 
 	let tmp = { search: search, userId: userId };
 	let jsonPayload = JSON.stringify(tmp);
@@ -577,9 +606,21 @@ function searchContacts()
 		if (this.readyState === 4 && this.status === 200)
 		{
 			let jsonObject = JSON.parse(xhr.responseText);
-			contacts = jsonObject.results || [];
+			// Backend returns an error object when no rows are found.
+			if (jsonObject.error && jsonObject.error !== "")
+			{
+				contacts = [];
+				renderContacts();
+				return;
+			}
+
+			// Keep a local normalized array used by render/edit/delete.
+			contacts = (jsonObject.results || []).map(normalizeContact);
 			renderContacts();
-			if (jsonObject.results?.length > 0) document.getElementById("contactSearchResult").innerHTML = "Contacts retrieved";
+			if (contacts.length > 0)
+			{
+				document.getElementById("contactAddResult").innerHTML = "Contacts retrieved";
+			}
 		}
 	};
 	xhr.send(jsonPayload);
@@ -588,6 +629,13 @@ function searchContacts()
 
 function renderContacts()
 {
+	// Render a friendly empty state when search returns no contacts.
+	if (!contacts.length)
+	{
+		document.getElementById("contactResults").innerHTML = '<p class="emptyState">No contacts found.</p>';
+		return;
+	}
+
 	let html = "";
 	contacts.forEach((c, i) =>
 	{
