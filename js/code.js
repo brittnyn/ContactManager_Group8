@@ -653,7 +653,7 @@ function saveEdit(index)
 function deleteContact(index)
 {
 	let contact = contacts[index];
-	let tmp = { email: contact.email, userId: userId };
+	let tmp = { email: contact.Email, userId: userId };
 	let jsonPayload = JSON.stringify(tmp);
 	let url = urlBase + '/DeleteContact.' + extension;
 
@@ -713,6 +713,7 @@ function validContactInfo(firstName, lastName, phone, email)
     return null;
 
 }
+
 
 
 
