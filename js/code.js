@@ -709,7 +709,8 @@ function renderContacts()
 		const isEditing = !!editModeMap[i];
 		// If the row is in edit mode, render from its draft to preserve unsaved typing.
 		const displayContact = isEditing && contactDraftMap[i] ? contactDraftMap[i] : c;
-		const fullName = `${displayContact.firstName} ${displayContact.lastName}`.trim();
+		// Keep the summary/header name tied to persisted data until Save is clicked.
+		const fullName = `${c.firstName} ${c.lastName}`.trim();
 		const safeName = escapeHtml(fullName || "Unnamed Contact");
 		const safeFirstName = escapeHtml(displayContact.firstName);
 		const safeLastName = escapeHtml(displayContact.lastName);
