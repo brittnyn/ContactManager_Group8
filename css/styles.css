@@ -607,6 +607,10 @@ body.contactPage {
     cursor: default;
 }
 
+.contact-card input::placeholder {
+    color: rgba(224, 247, 255, 0.5);
+}
+
 .actionsTop {
     display: flex;
     justify-content: flex-end;

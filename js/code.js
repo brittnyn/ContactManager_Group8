@@ -1,4 +1,4 @@
-const urlBase = 'http://adamdisanti.xyz/LAMPAPI';
+const urlBase = 'http://localhost:8888/COP4331/ContactManager_Group8/LAMPAPI';
 const extension = 'php';
 
 let userId = 0;
@@ -700,10 +700,10 @@ function renderContacts()
 				</button>
 
 				<div class="contact-details ${isExpanded ? 'show' : ''}">
-					<input type="text" value="${safeFirstName}" id="first-${i}" ${isEditing ? '' : 'readonly'} />
-					<input type="text" value="${safeLastName}" id="last-${i}" ${isEditing ? '' : 'readonly'} />
-					<input type="text" value="${safeEmail}" id="email-${i}" ${isEditing ? '' : 'readonly'} />
-					<input type="text" value="${safePhone}" id="phone-${i}" ${isEditing ? '' : 'readonly'} />
+					<input type="text" value="${safeFirstName}" id="first-${i}" placeholder="First Name" ${isEditing ? '' : 'readonly'} />
+					<input type="text" value="${safeLastName}" id="last-${i}" placeholder="Last Name" ${isEditing ? '' : 'readonly'} />
+					<input type="email" value="${safeEmail}" id="email-${i}" placeholder="Email Address" ${isEditing ? '' : 'readonly'} />
+					<input type="tel" value="${safePhone}" id="phone-${i}" placeholder="Phone Number" ${isEditing ? '' : 'readonly'} />
 
 					<div class="actionsTop">
 						<button type="button" class="editBtn" onclick="toggleEditMode(${i})">${isEditing ? 'Cancel' : 'Edit'}</button>
