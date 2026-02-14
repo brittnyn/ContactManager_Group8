@@ -81,6 +81,18 @@
 			</div>
 		</main>
 	</div>
+
+	<!-- Delete Confirmation Modal -->
+	<div id="deleteConfirmModal" class="confirmModal" aria-hidden="true">
+		<div class="confirmModalCard" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+			<h3 id="deleteConfirmTitle">Delete Contact?</h3>
+			<p>This action cannot be undone. Are you sure you want to delete this contact?</p>
+			<div class="confirmActions">
+				<button type="button" class="confirmCancelBtn" onclick="closeDeleteConfirm()">Cancel</button>
+				<button type="button" class="confirmDeleteBtn" onclick="confirmDeleteContact()">Delete</button>
+			</div>
+		</div>
+	</div>
 <script>
 window.onload = function() {
     readCookie();

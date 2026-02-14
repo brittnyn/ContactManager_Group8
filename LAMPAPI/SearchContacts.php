@@ -12,6 +12,7 @@
 	} 
 	else
 	{
+		// Scope search strictly to the logged-in user's contacts.
 		$stmt = $conn->prepare("select * from Contacts where (FirstName like ? OR LastName like ?) and UserID=?");
 		$searchName = "%" . $inData["search"] . "%";
 		$stmt->bind_param("sss", $searchName, $searchName, $inData["userId"]);

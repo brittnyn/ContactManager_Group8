@@ -5,6 +5,13 @@ let userId = 0;
 let firstName = "";
 let lastName = "";
 let contacts = [];
+// UI state maps allow multiple rows to stay expanded/edited independently.
+let expandedContactMap = {};
+let editModeMap = {};
+// Draft buffer keyed by row index so one save doesn't wipe another row's in-progress edits.
+let contactDraftMap = {};
+// Tracks which row is pending deletion in the confirmation dialog.
+let pendingDeleteIndex = null;
 const ids = []
 
 // Switch between Login and Register Boxes
@@ -274,7 +281,11 @@ function readCookie()
 	else
 	{
 		document.getElementById("userName").innerHTML = firstName + " " + lastName;
-		searchContacts();
+		// If we're on the contacts page, load this user's contacts immediately.
+		if (document.getElementById("contactResults"))
+		{
+			searchContacts();
+		}
 	}
 }
 
@@ -323,40 +334,43 @@ const passLen = document.getElementById("passLen");
 const ORIGINAL_HEIGHT = "720px";
 const EXPAND_HEIGHT = "860px";
 
+// Guard register-only UI bindings so contact page script execution doesn't fail.
+if (regUser && regPassword && explanationUser && explanationPassword && boxDiv)
+{
 regUser.onfocus = function() 
 {
-    explanationUser.style.display = "block";
-    boxDiv.style.minHeight = EXPAND_HEIGHT;
+	explanationUser.style.display = "block";
+	boxDiv.style.minHeight = EXPAND_HEIGHT;
 	document.getElementById("registerResult").textContent = "";
 };
 
 regUser.onblur = function() 
 {
-    explanationUser.style.display = "none";
-    if (!regPassword.matches(':focus')) {
-        boxDiv.style.minHeight = ORIGINAL_HEIGHT;
-    }
+	explanationUser.style.display = "none";
+	if (!regPassword.matches(':focus')) {
+		boxDiv.style.minHeight = ORIGINAL_HEIGHT;
+	}
 };
 
 regPassword.onfocus = function() 
 {
-    explanationPassword.style.display = "block";
-    boxDiv.style.minHeight = EXPAND_HEIGHT;
-    document.getElementById("registerResult").textContent = "";
+	explanationPassword.style.display = "block";
+	boxDiv.style.minHeight = EXPAND_HEIGHT;
+	document.getElementById("registerResult").textContent = "";
 };
 
 regPassword.onblur = function() 
 {
-    explanationPassword.style.display = "none";
-    if (!regUser.matches(':focus')) {
-        boxDiv.style.minHeight = ORIGINAL_HEIGHT;
-    }
+	explanationPassword.style.display = "none";
+	if (!regUser.matches(':focus')) {
+		boxDiv.style.minHeight = ORIGINAL_HEIGHT;
+	}
 };
 
 // Immediate username validation
 regUser.oninput = function() 
 {
-    const value = regUser.value;
+	const value = regUser.value;
     
     if (PATTERNS.letter.test(value)) 
 	{
@@ -460,6 +474,7 @@ regPassword.oninput = function()
         passLen.classList.add("invalid");
     }
 }
+}
 
 function validLoginForm(username, password) 
 {
@@ -552,10 +567,29 @@ function addContact()
 		if (this.readyState === 4 && this.status === 200)
 		{
 			document.getElementById("contactAddResult").innerHTML = "Contact added";
+			// Clear inputs after a successful create.
+			document.getElementById("firstName").value = "";
+			document.getElementById("lastName").value = "";
+			document.getElementById("email").value = "";
+			document.getElementById("phone").value = "";
+			// Refresh list so the new contact appears in "Your Contacts".
 			searchContacts();
 		}
 	};
 	xhr.send(jsonPayload);
+}
+
+// Normalize mixed backend key styles (firstName vs FirstName, etc.)
+// so rendering logic can use a single object shape.
+function normalizeContact(c)
+{
+	return {
+		id: c.id ?? c.ID ?? null,
+		firstName: c.firstName ?? c.FirstName ?? "",
+		lastName: c.lastName ?? c.LastName ?? "",
+		email: c.email ?? c.Email ?? "",
+		phone: c.phone ?? c.Phone ?? ""
+	};
 }
 
 
@@ -563,6 +597,8 @@ function searchContacts()
 {
 	let search = document.getElementById("searchText").value;
 	document.getElementById("contactResults").innerHTML = "";
+	document.getElementById("contactEditResult").innerHTML = "";
+	document.getElementById("contactDeleteResult").innerHTML = "";
 
 	let tmp = { search: search, userId: userId };
 	let jsonPayload = JSON.stringify(tmp);
@@ -577,47 +613,195 @@ function searchContacts()
 		if (this.readyState === 4 && this.status === 200)
 		{
 			let jsonObject = JSON.parse(xhr.responseText);
-			contacts = jsonObject.results || [];
+			// Backend returns an error object when no rows are found.
+			if (jsonObject.error && jsonObject.error !== "")
+			{
+				contacts = [];
+				renderContacts();
+				return;
+			}
+
+			// Keep a local normalized array used by render/edit/delete.
+			contacts = (jsonObject.results || []).map(normalizeContact);
+			// Reset open/edit state each time a fresh search result is rendered.
+			expandedContactMap = {};
+			editModeMap = {};
+			contactDraftMap = {};
 			renderContacts();
-			
+			if (contacts.length > 0)
+			{
+				document.getElementById("contactAddResult").innerHTML = "Contacts retrieved";
+			}
 		}
 	};
 	xhr.send(jsonPayload);
 }
 
+// Escape untrusted text before inserting it in HTML templates.
+function escapeHtml(value)
+{
+	return String(value ?? "")
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/\"/g, "&quot;")
+		.replace(/'/g, "&#039;");
+}
+
+// Expand/collapse one row without affecting other expanded rows.
+function toggleContact(index)
+{
+	if (expandedContactMap[index])
+	{
+		// Collapsing a row exits edit mode and clears unsaved draft for that row only.
+		delete expandedContactMap[index];
+		delete editModeMap[index];
+		delete contactDraftMap[index];
+	}
+	else
+	{
+		expandedContactMap[index] = true;
+	}
+	renderContacts();
+}
+
+// Turn editing controls on/off per row (multiple rows can be edited if desired).
+function toggleEditMode(index)
+{
+	expandedContactMap[index] = true;
+	if (editModeMap[index])
+	{
+		// Cancel editing for this row only.
+		delete editModeMap[index];
+		delete contactDraftMap[index];
+	}
+	else
+	{
+		// Start edit mode with a copy of persisted values.
+		editModeMap[index] = true;
+		contactDraftMap[index] = { ...contacts[index] };
+	}
+	renderContacts();
+}
+
+// Keep one row's draft up to date as the user types.
+function updateContactDraft(index, field, value)
+{
+	if (!contactDraftMap[index])
+	{
+		contactDraftMap[index] = { ...contacts[index] };
+	}
+	contactDraftMap[index][field] = value;
+}
+
 
 function renderContacts()
 {
+	// Render a friendly empty state when search returns no contacts.
+	if (!contacts.length)
+	{
+		document.getElementById("contactResults").innerHTML = '<p class="emptyState">No contacts found.</p>';
+		return;
+	}
+
 	let html = "";
 	contacts.forEach((c, i) =>
 	{
+		const isExpanded = !!expandedContactMap[i];
+		const isEditing = !!editModeMap[i];
+		// If the row is in edit mode, render from its draft to preserve unsaved typing.
+		const displayContact = isEditing && contactDraftMap[i] ? contactDraftMap[i] : c;
+		// Keep the summary/header name tied to persisted data until Save is clicked.
+		const fullName = `${c.firstName} ${c.lastName}`.trim();
+		const safeName = escapeHtml(fullName || "Unnamed Contact");
+		const safeFirstName = escapeHtml(displayContact.firstName);
+		const safeLastName = escapeHtml(displayContact.lastName);
+		const safeEmail = escapeHtml(displayContact.email);
+		const safePhone = escapeHtml(displayContact.phone);
+
 		html += `
-            <div class="contact-card">
-                <input type="text" value="${c.FirstName}" id="first-${i}" />
-                <input type="text" value="${c.LastName}" id="last-${i}" />
-                <input type="text" value="${c.Email}" id="email-${i}" />
-                <input type="text" value="${c.Phone}" id="phone-${i}" />
-                <div class="actions">
-                    <button onclick="saveEdit(${i})">Save</button>
-                    <button onclick="deleteContact(${i})">Delete</button>
-                </div>
+			<div class="contact-card ${isExpanded ? 'expanded' : ''}">
+				<button type="button" class="contact-summary" onclick="toggleContact(${i})" aria-expanded="${isExpanded}">
+					<span class="contact-summary-name">${safeName}</span>
+					<span class="contact-summary-icon">${isExpanded ? '−' : '+'}</span>
+				</button>
+
+				<div class="contact-details ${isExpanded ? 'show' : ''}">
+					<input type="text" value="${safeFirstName}" id="first-${i}" placeholder="First Name" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'firstName', this.value)" />
+					<input type="text" value="${safeLastName}" id="last-${i}" placeholder="Last Name" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'lastName', this.value)" />
+					<input type="email" value="${safeEmail}" id="email-${i}" placeholder="Email Address" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'email', this.value)" />
+					<input type="tel" value="${safePhone}" id="phone-${i}" placeholder="Phone Number" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'phone', this.value)" />
+
+					<div class="actionsTop">
+						<button type="button" class="editBtn" onclick="toggleEditMode(${i})">${isEditing ? 'Cancel' : 'Edit'}</button>
+					</div>
+
+					<div class="actions ${isEditing ? 'show' : ''}">
+						<button type="button" onclick="saveEdit(${i})">Save</button>
+						<button type="button" onclick="requestDeleteContact(${i})">Delete</button>
+					</div>
+				</div>
             </div>
-            <hr>
         `;
 	});
 	document.getElementById("contactResults").innerHTML = html;
 }
 
+// Open the modal and remember which contact row should be deleted if confirmed.
+function requestDeleteContact(index)
+{
+	pendingDeleteIndex = index;
+	const modal = document.getElementById("deleteConfirmModal");
+	if (modal)
+	{
+		modal.classList.add("show");
+		modal.setAttribute("aria-hidden", "false");
+	}
+}
+
+// Close modal without deleting anything.
+function closeDeleteConfirm()
+{
+	pendingDeleteIndex = null;
+	const modal = document.getElementById("deleteConfirmModal");
+	if (modal)
+	{
+		modal.classList.remove("show");
+		modal.setAttribute("aria-hidden", "true");
+	}
+}
+
+// Delete only after explicit user confirmation.
+function confirmDeleteContact()
+{
+	if (pendingDeleteIndex === null)
+	{
+		closeDeleteConfirm();
+		return;
+	}
+
+	const indexToDelete = pendingDeleteIndex;
+	closeDeleteConfirm();
+	deleteContact(indexToDelete);
+}
+
 
 function saveEdit(index)
 {
-	let contact = contacts[index];
-	let edited = {
-		id: contact.id,
+	// Read from draft first, then fallback to DOM values.
+	const draft = contactDraftMap[index] || {
 		firstName: document.getElementById(`first-${index}`).value,
 		lastName: document.getElementById(`last-${index}`).value,
 		email: document.getElementById(`email-${index}`).value,
-		phone: document.getElementById(`phone-${index}`).value,
+		phone: document.getElementById(`phone-${index}`).value
+	};
+
+	let edited = {
+		id: contacts[index].id,
+		firstName: draft.firstName,
+		lastName: draft.lastName,
+		email: draft.email,
+		phone: draft.phone,
 		userId: userId
 	};
 
@@ -636,13 +820,28 @@ function saveEdit(index)
 
 	xhr.onreadystatechange = function()
 	{
-		if (this.readyState === 4 && this.status === 200)
+		if (this.readyState !== 4)
+		{
+			return;
+		}
+
+		if (this.status !== 200)
+		{
+			document.getElementById("contactEditResult").innerHTML = "Update request failed. Please try again.";
+			return;
+		}
+
+		if (this.status === 200)
 		{
 			let res = JSON.parse(xhr.responseText);
 			if (res.error && res.error !== "") document.getElementById("contactEditResult").innerHTML = res.error;
 			else {
 				document.getElementById("contactEditResult").innerHTML = "Contact updated";
 				contacts[index] = edited;
+				// Exit edit mode only for the saved row; preserve all other drafts/edits.
+				delete editModeMap[index];
+				delete contactDraftMap[index];
+				renderContacts();
 			}
 		}
 	};
@@ -652,8 +851,16 @@ function saveEdit(index)
 
 function deleteContact(index)
 {
+	// Safety: ignore stale indices (e.g., list changed before confirm click).
+	if (index < 0 || index >= contacts.length)
+	{
+		document.getElementById("contactDeleteResult").innerHTML = "Contact no longer available.";
+		return;
+	}
+
 	let contact = contacts[index];
-	let tmp = { email: contact.Email, userId: userId };
+	// Delete by unique contact id (scoped by userId on the backend).
+	let tmp = { id: contact.id, userId: userId };
 	let jsonPayload = JSON.stringify(tmp);
 	let url = urlBase + '/DeleteContact.' + extension;
 
@@ -671,6 +878,10 @@ function deleteContact(index)
 			{
 				document.getElementById("contactDeleteResult").innerHTML = "Contact deleted";
 				contacts.splice(index, 1);
+				// Rebuild state maps after removing an item to avoid index drift.
+				expandedContactMap = {};
+				editModeMap = {};
+				contactDraftMap = {};
 				renderContacts();
 			}
 		}
