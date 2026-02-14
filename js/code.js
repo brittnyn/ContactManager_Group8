@@ -1,4 +1,4 @@
-const urlBase = 'http://localhost:8888/COP4331/ContactManager_Group8/LAMPAPI';
+const urlBase = 'http://adamdisanti.xyz/LAMPAPI';
 const extension = 'php';
 
 let userId = 0;
