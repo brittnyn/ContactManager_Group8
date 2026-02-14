@@ -5,6 +5,9 @@ let userId = 0;
 let firstName = "";
 let lastName = "";
 let contacts = [];
+// UI state for expandable contact rows and inline edit mode.
+let expandedContactIndex = null;
+let editModeIndex = null;
 const ids = []
 
 // Switch between Login and Register Boxes
@@ -616,6 +619,9 @@ function searchContacts()
 
 			// Keep a local normalized array used by render/edit/delete.
 			contacts = (jsonObject.results || []).map(normalizeContact);
+			// Reset open/edit state each time a fresh search result is rendered.
+			expandedContactIndex = null;
+			editModeIndex = null;
 			renderContacts();
 			if (contacts.length > 0)
 			{
@@ -624,6 +630,44 @@ function searchContacts()
 		}
 	};
 	xhr.send(jsonPayload);
+}
+
+// Escape untrusted text before inserting it in HTML templates.
+function escapeHtml(value)
+{
+	return String(value ?? "")
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/\"/g, "&quot;")
+		.replace(/'/g, "&#039;");
+}
+
+// Expand/collapse a single contact row.
+function toggleContact(index)
+{
+	if (expandedContactIndex === index)
+	{
+		expandedContactIndex = null;
+		editModeIndex = null;
+	}
+	else
+	{
+		expandedContactIndex = index;
+		if (editModeIndex !== index)
+		{
+			editModeIndex = null;
+		}
+	}
+	renderContacts();
+}
+
+// Turn editing controls on/off for the currently expanded row.
+function toggleEditMode(index)
+{
+	expandedContactIndex = index;
+	editModeIndex = editModeIndex === index ? null : index;
+	renderContacts();
 }
 
 
@@ -639,18 +683,38 @@ function renderContacts()
 	let html = "";
 	contacts.forEach((c, i) =>
 	{
+		const isExpanded = expandedContactIndex === i;
+		const isEditing = editModeIndex === i;
+		const fullName = `${c.firstName} ${c.lastName}`.trim();
+		const safeName = escapeHtml(fullName || "Unnamed Contact");
+		const safeFirstName = escapeHtml(c.firstName);
+		const safeLastName = escapeHtml(c.lastName);
+		const safeEmail = escapeHtml(c.email);
+		const safePhone = escapeHtml(c.phone);
+
 		html += `
-            <div class="contact-card">
-                <input type="text" value="${c.firstName}" id="first-${i}" />
-                <input type="text" value="${c.lastName}" id="last-${i}" />
-                <input type="text" value="${c.email}" id="email-${i}" />
-                <input type="text" value="${c.phone}" id="phone-${i}" />
-                <div class="actions">
-                    <button onclick="saveEdit(${i})">Save</button>
-                    <button onclick="deleteContact(${i})">Delete</button>
-                </div>
+			<div class="contact-card ${isExpanded ? 'expanded' : ''}">
+				<button type="button" class="contact-summary" onclick="toggleContact(${i})" aria-expanded="${isExpanded}">
+					<span class="contact-summary-name">${safeName}</span>
+					<span class="contact-summary-icon">${isExpanded ? '−' : '+'}</span>
+				</button>
+
+				<div class="contact-details ${isExpanded ? 'show' : ''}">
+					<input type="text" value="${safeFirstName}" id="first-${i}" ${isEditing ? '' : 'readonly'} />
+					<input type="text" value="${safeLastName}" id="last-${i}" ${isEditing ? '' : 'readonly'} />
+					<input type="text" value="${safeEmail}" id="email-${i}" ${isEditing ? '' : 'readonly'} />
+					<input type="text" value="${safePhone}" id="phone-${i}" ${isEditing ? '' : 'readonly'} />
+
+					<div class="actionsTop">
+						<button type="button" class="editBtn" onclick="toggleEditMode(${i})">${isEditing ? 'Cancel' : 'Edit'}</button>
+					</div>
+
+					<div class="actions ${isEditing ? 'show' : ''}">
+						<button type="button" onclick="saveEdit(${i})">Save</button>
+						<button type="button" onclick="deleteContact(${i})">Delete</button>
+					</div>
+				</div>
             </div>
-            <hr>
         `;
 	});
 	document.getElementById("contactResults").innerHTML = html;
@@ -661,6 +725,7 @@ function saveEdit(index)
 {
 	
 	let edited = {
+		id: contacts[index].id,
 		firstName: document.getElementById(`first-${index}`).value,
 		lastName: document.getElementById(`last-${index}`).value,
 		email: document.getElementById(`email-${index}`).value,
@@ -683,13 +748,26 @@ function saveEdit(index)
 
 	xhr.onreadystatechange = function()
 	{
-		if (this.readyState === 4 && this.status === 200)
+		if (this.readyState !== 4)
+		{
+			return;
+		}
+
+		if (this.status !== 200)
+		{
+			document.getElementById("contactEditResult").innerHTML = "Update request failed. Please try again.";
+			return;
+		}
+
+		if (this.status === 200)
 		{
 			let res = JSON.parse(xhr.responseText);
 			if (res.error && res.error !== "") document.getElementById("contactEditResult").innerHTML = res.error;
 			else {
 				document.getElementById("contactEditResult").innerHTML = "Contact updated";
 				contacts[index] = edited;
+				editModeIndex = null;
+				renderContacts();
 			}
 		}
 	};

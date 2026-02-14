@@ -522,18 +522,65 @@ body.contactPage {
     gap: 15px;
 }
 
+/* Contact row starts compact (name only), then expands to show full details. */
 .contact-card {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(84, 165, 213, 0.3);
     border-radius: 12px;
-    padding: 18px;
+    padding: 0;
     transition: all 0.3s ease;
+    overflow: hidden;
 }
 
 .contact-card:hover {
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(84, 165, 213, 0.6);
-    transform: translateX(5px);
+}
+
+.contact-card.expanded {
+    border-color: rgba(84, 165, 213, 0.7);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.contact-summary {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    background: transparent;
+    color: #e0f7ff;
+    padding: 14px 18px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
+
+.contact-summary:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.contact-summary-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.contact-summary-icon {
+    font-size: 18px;
+    color: rgba(224, 247, 255, 0.8);
+}
+
+/* Hidden by default; becomes visible when the row is expanded. */
+.contact-details {
+    display: none;
+    padding: 0 18px 16px;
+    border-top: 1px solid rgba(84, 165, 213, 0.25);
+}
+
+.contact-details.show {
+    display: block;
 }
 
 .contact-card input {
@@ -555,10 +602,40 @@ body.contactPage {
     background: rgba(255, 255, 255, 0.12);
 }
 
-.actions {
+.contact-card input[readonly] {
+    opacity: 0.9;
+    cursor: default;
+}
+
+.actionsTop {
     display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.editBtn {
+    padding: 9px 16px;
+    border: 1px solid rgba(84, 165, 213, 0.6);
+    border-radius: 8px;
+    background: rgba(84, 165, 213, 0.25);
+    color: #e0f7ff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.editBtn:hover {
+    background: rgba(84, 165, 213, 0.4);
+}
+
+.actions {
+    display: none;
     gap: 10px;
     margin-top: 12px;
+}
+
+.actions.show {
+    display: flex;
 }
 
 .actions button {
