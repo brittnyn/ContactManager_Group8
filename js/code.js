@@ -274,6 +274,7 @@ function readCookie()
 	else
 	{
 		document.getElementById("userName").innerHTML = firstName + " " + lastName;
+		searchContacts();
 	}
 }
 
@@ -562,7 +563,6 @@ function searchContacts()
 {
 	let search = document.getElementById("searchText").value;
 	document.getElementById("contactResults").innerHTML = "";
-	document.getElementById("contactSearchResult").innerHTML = "";
 
 	let tmp = { search: search, userId: userId };
 	let jsonPayload = JSON.stringify(tmp);
@@ -579,7 +579,7 @@ function searchContacts()
 			let jsonObject = JSON.parse(xhr.responseText);
 			contacts = jsonObject.results || [];
 			renderContacts();
-			if (jsonObject.results?.length > 0) document.getElementById("contactSearchResult").innerHTML = "Contacts retrieved";
+			
 		}
 	};
 	xhr.send(jsonPayload);
@@ -593,10 +593,10 @@ function renderContacts()
 	{
 		html += `
             <div class="contact-card">
-                <input type="text" value="${c.firstName}" id="first-${i}" />
-                <input type="text" value="${c.lastName}" id="last-${i}" />
-                <input type="text" value="${c.email}" id="email-${i}" />
-                <input type="text" value="${c.phone}" id="phone-${i}" />
+                <input type="text" value="${c.FirstName}" id="first-${i}" />
+                <input type="text" value="${c.LastName}" id="last-${i}" />
+                <input type="text" value="${c.Email}" id="email-${i}" />
+                <input type="text" value="${c.Phone}" id="phone-${i}" />
                 <div class="actions">
                     <button onclick="saveEdit(${i})">Save</button>
                     <button onclick="deleteContact(${i})">Delete</button>
@@ -611,8 +611,9 @@ function renderContacts()
 
 function saveEdit(index)
 {
-	
+	let contact = contacts[index];
 	let edited = {
+		id: contact.id,
 		firstName: document.getElementById(`first-${index}`).value,
 		lastName: document.getElementById(`last-${index}`).value,
 		email: document.getElementById(`email-${index}`).value,
@@ -712,5 +713,6 @@ function validContactInfo(firstName, lastName, phone, email)
     return null;
 
 }
+
 
 
