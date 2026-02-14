@@ -10,6 +10,8 @@ let expandedContactMap = {};
 let editModeMap = {};
 // Draft buffer keyed by row index so one save doesn't wipe another row's in-progress edits.
 let contactDraftMap = {};
+// Tracks which row is pending deletion in the confirmation dialog.
+let pendingDeleteIndex = null;
 const ids = []
 
 // Switch between Login and Register Boxes
@@ -736,13 +738,51 @@ function renderContacts()
 
 					<div class="actions ${isEditing ? 'show' : ''}">
 						<button type="button" onclick="saveEdit(${i})">Save</button>
-						<button type="button" onclick="deleteContact(${i})">Delete</button>
+						<button type="button" onclick="requestDeleteContact(${i})">Delete</button>
 					</div>
 				</div>
             </div>
         `;
 	});
 	document.getElementById("contactResults").innerHTML = html;
+}
+
+// Open the modal and remember which contact row should be deleted if confirmed.
+function requestDeleteContact(index)
+{
+	pendingDeleteIndex = index;
+	const modal = document.getElementById("deleteConfirmModal");
+	if (modal)
+	{
+		modal.classList.add("show");
+		modal.setAttribute("aria-hidden", "false");
+	}
+}
+
+// Close modal without deleting anything.
+function closeDeleteConfirm()
+{
+	pendingDeleteIndex = null;
+	const modal = document.getElementById("deleteConfirmModal");
+	if (modal)
+	{
+		modal.classList.remove("show");
+		modal.setAttribute("aria-hidden", "true");
+	}
+}
+
+// Delete only after explicit user confirmation.
+function confirmDeleteContact()
+{
+	if (pendingDeleteIndex === null)
+	{
+		closeDeleteConfirm();
+		return;
+	}
+
+	const indexToDelete = pendingDeleteIndex;
+	closeDeleteConfirm();
+	deleteContact(indexToDelete);
 }
 
 
@@ -811,8 +851,16 @@ function saveEdit(index)
 
 function deleteContact(index)
 {
+	// Safety: ignore stale indices (e.g., list changed before confirm click).
+	if (index < 0 || index >= contacts.length)
+	{
+		document.getElementById("contactDeleteResult").innerHTML = "Contact no longer available.";
+		return;
+	}
+
 	let contact = contacts[index];
-	let tmp = { email: contact.email, userId: userId };
+	// Delete by unique contact id (scoped by userId on the backend).
+	let tmp = { id: contact.id, userId: userId };
 	let jsonPayload = JSON.stringify(tmp);
 	let url = urlBase + '/DeleteContact.' + extension;
 
