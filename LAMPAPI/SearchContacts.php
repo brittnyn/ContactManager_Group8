@@ -27,8 +27,8 @@
 				$searchResults .= ",";
 			}
 			$searchCount++;
-			// Return lower-camel-case keys to match frontend JS usage.
-			$searchResults .= '{"id" : "' . $row["ID"] . '", "firstName" : "' . $row["FirstName"] . '", "lastName" : "' . $row["LastName"] . '", "phone" : "' . $row["Phone"] . '", "email" : "' . $row["Email"] . '"}';
+			// This returns a JSON object for each contact
+			$searchResults .= '{"id" : "' . $row["ID"] . '", "FirstName" : "' . $row["FirstName"] . '", "LastName" : "' . $row["LastName"] . '", "Phone" : "' . $row["Phone"] . '", "Email" : "' . $row["Email"] . '"}';
 		}
 		
 		if( $searchCount == 0 )
