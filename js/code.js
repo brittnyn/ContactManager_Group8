@@ -5,9 +5,11 @@ let userId = 0;
 let firstName = "";
 let lastName = "";
 let contacts = [];
-// UI state for expandable contact rows and inline edit mode.
-let expandedContactIndex = null;
-let editModeIndex = null;
+// UI state maps allow multiple rows to stay expanded/edited independently.
+let expandedContactMap = {};
+let editModeMap = {};
+// Draft buffer keyed by row index so one save doesn't wipe another row's in-progress edits.
+let contactDraftMap = {};
 const ids = []
 
 // Switch between Login and Register Boxes
@@ -620,8 +622,9 @@ function searchContacts()
 			// Keep a local normalized array used by render/edit/delete.
 			contacts = (jsonObject.results || []).map(normalizeContact);
 			// Reset open/edit state each time a fresh search result is rendered.
-			expandedContactIndex = null;
-			editModeIndex = null;
+			expandedContactMap = {};
+			editModeMap = {};
+			contactDraftMap = {};
 			renderContacts();
 			if (contacts.length > 0)
 			{
@@ -643,31 +646,50 @@ function escapeHtml(value)
 		.replace(/'/g, "&#039;");
 }
 
-// Expand/collapse a single contact row.
+// Expand/collapse one row without affecting other expanded rows.
 function toggleContact(index)
 {
-	if (expandedContactIndex === index)
+	if (expandedContactMap[index])
 	{
-		expandedContactIndex = null;
-		editModeIndex = null;
+		// Collapsing a row exits edit mode and clears unsaved draft for that row only.
+		delete expandedContactMap[index];
+		delete editModeMap[index];
+		delete contactDraftMap[index];
 	}
 	else
 	{
-		expandedContactIndex = index;
-		if (editModeIndex !== index)
-		{
-			editModeIndex = null;
-		}
+		expandedContactMap[index] = true;
 	}
 	renderContacts();
 }
 
-// Turn editing controls on/off for the currently expanded row.
+// Turn editing controls on/off per row (multiple rows can be edited if desired).
 function toggleEditMode(index)
 {
-	expandedContactIndex = index;
-	editModeIndex = editModeIndex === index ? null : index;
+	expandedContactMap[index] = true;
+	if (editModeMap[index])
+	{
+		// Cancel editing for this row only.
+		delete editModeMap[index];
+		delete contactDraftMap[index];
+	}
+	else
+	{
+		// Start edit mode with a copy of persisted values.
+		editModeMap[index] = true;
+		contactDraftMap[index] = { ...contacts[index] };
+	}
 	renderContacts();
+}
+
+// Keep one row's draft up to date as the user types.
+function updateContactDraft(index, field, value)
+{
+	if (!contactDraftMap[index])
+	{
+		contactDraftMap[index] = { ...contacts[index] };
+	}
+	contactDraftMap[index][field] = value;
 }
 
 
@@ -683,14 +705,16 @@ function renderContacts()
 	let html = "";
 	contacts.forEach((c, i) =>
 	{
-		const isExpanded = expandedContactIndex === i;
-		const isEditing = editModeIndex === i;
-		const fullName = `${c.firstName} ${c.lastName}`.trim();
+		const isExpanded = !!expandedContactMap[i];
+		const isEditing = !!editModeMap[i];
+		// If the row is in edit mode, render from its draft to preserve unsaved typing.
+		const displayContact = isEditing && contactDraftMap[i] ? contactDraftMap[i] : c;
+		const fullName = `${displayContact.firstName} ${displayContact.lastName}`.trim();
 		const safeName = escapeHtml(fullName || "Unnamed Contact");
-		const safeFirstName = escapeHtml(c.firstName);
-		const safeLastName = escapeHtml(c.lastName);
-		const safeEmail = escapeHtml(c.email);
-		const safePhone = escapeHtml(c.phone);
+		const safeFirstName = escapeHtml(displayContact.firstName);
+		const safeLastName = escapeHtml(displayContact.lastName);
+		const safeEmail = escapeHtml(displayContact.email);
+		const safePhone = escapeHtml(displayContact.phone);
 
 		html += `
 			<div class="contact-card ${isExpanded ? 'expanded' : ''}">
@@ -700,10 +724,10 @@ function renderContacts()
 				</button>
 
 				<div class="contact-details ${isExpanded ? 'show' : ''}">
-					<input type="text" value="${safeFirstName}" id="first-${i}" placeholder="First Name" ${isEditing ? '' : 'readonly'} />
-					<input type="text" value="${safeLastName}" id="last-${i}" placeholder="Last Name" ${isEditing ? '' : 'readonly'} />
-					<input type="email" value="${safeEmail}" id="email-${i}" placeholder="Email Address" ${isEditing ? '' : 'readonly'} />
-					<input type="tel" value="${safePhone}" id="phone-${i}" placeholder="Phone Number" ${isEditing ? '' : 'readonly'} />
+					<input type="text" value="${safeFirstName}" id="first-${i}" placeholder="First Name" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'firstName', this.value)" />
+					<input type="text" value="${safeLastName}" id="last-${i}" placeholder="Last Name" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'lastName', this.value)" />
+					<input type="email" value="${safeEmail}" id="email-${i}" placeholder="Email Address" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'email', this.value)" />
+					<input type="tel" value="${safePhone}" id="phone-${i}" placeholder="Phone Number" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'phone', this.value)" />
 
 					<div class="actionsTop">
 						<button type="button" class="editBtn" onclick="toggleEditMode(${i})">${isEditing ? 'Cancel' : 'Edit'}</button>
@@ -723,13 +747,20 @@ function renderContacts()
 
 function saveEdit(index)
 {
-	
-	let edited = {
-		id: contacts[index].id,
+	// Read from draft first, then fallback to DOM values.
+	const draft = contactDraftMap[index] || {
 		firstName: document.getElementById(`first-${index}`).value,
 		lastName: document.getElementById(`last-${index}`).value,
 		email: document.getElementById(`email-${index}`).value,
-		phone: document.getElementById(`phone-${index}`).value,
+		phone: document.getElementById(`phone-${index}`).value
+	};
+
+	let edited = {
+		id: contacts[index].id,
+		firstName: draft.firstName,
+		lastName: draft.lastName,
+		email: draft.email,
+		phone: draft.phone,
 		userId: userId
 	};
 
@@ -766,7 +797,9 @@ function saveEdit(index)
 			else {
 				document.getElementById("contactEditResult").innerHTML = "Contact updated";
 				contacts[index] = edited;
-				editModeIndex = null;
+				// Exit edit mode only for the saved row; preserve all other drafts/edits.
+				delete editModeMap[index];
+				delete contactDraftMap[index];
 				renderContacts();
 			}
 		}
@@ -796,6 +829,10 @@ function deleteContact(index)
 			{
 				document.getElementById("contactDeleteResult").innerHTML = "Contact deleted";
 				contacts.splice(index, 1);
+				// Rebuild state maps after removing an item to avoid index drift.
+				expandedContactMap = {};
+				editModeMap = {};
+				contactDraftMap = {};
 				renderContacts();
 			}
 		}
