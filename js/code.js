@@ -142,6 +142,8 @@ function doLogin()
 				lastName = jsonObject.lastName;
 				saveCookie();
 
+				document.getElementById("loginResult").style.color = "#51cf66";
+				document.getElementById("loginResult").style.backgroundColor = "rgba(81, 207, 102, 0.1)";
 				document.getElementById("loginResult").innerText = "Logging in...";
                 
 				setTimeout(() => {
@@ -216,7 +218,9 @@ function doRegister()
                 userId = jsonObject.id;
                 firstName = jsonObject.firstName;
                 lastName = jsonObject.lastName;
-
+				
+				document.getElementById("registerResult").style.color = "#51cf66";
+				document.getElementById("registerResult").style.backgroundColor = "rgba(81, 207, 102, 0.1)";
 				document.getElementById("registerResult").innerText = "Account created! Logging in...";
                 saveCookie();
 				setTimeout(() => {

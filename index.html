@@ -33,15 +33,14 @@
 		<div class="seaweed seaweed4"></div>
 		<div class="seaweed seaweed5"></div>
 		<div class="seaweed seaweed6"></div>
-
-		<div class="clamshell">
-    	<a href="https://github.com/brittnyn/ContactManager_Group8" target="_blank" rel="noopener noreferrer" class="clamshell-link">
-        <div class="clamshell-top"></div>
-        <div class="clamshell-bottom"></div>
-    </a>
-</div>
 	</section>
 	<body>
+		<div class="clamshell">
+			<a href="https://github.com/brittnyn/ContactManager_Group8" target="_blank" class="clamshellContainer">
+				<img src="images/shell_closed.png" alt="Closed clamshell" class="image closed">
+				<img src="images/shell_open.png" alt="Open clamshell" class="image open">
+			</a>
+		</div>
 		<main>
 			<div class="containerDiv" aria-label="Main Container">
 				<div class="boxDiv" id="box">
@@ -145,12 +144,11 @@
 								<p id="passLen" class="invalid"><span class="icon"></span> 8 to 32 characters</p>
 							</div>
 						</div>
-						<div id="errorMessage" class="error-message"></div>
 					</div>
 					<!--Switch between Login and Register Boxes -->
 					<div id="switchBox" aria-label="Navigation">
-						<a href="#" id="loginSwitch" onclick="switchToLogin()">Login</a>
-						<a href="#" id="registerSwitch" onclick="switchToRegister()">Register</a>
+						<button id="loginSwitch" onclick="switchToLogin()">Login</button>
+						<button id="registerSwitch" onclick="switchToRegister()">Register</button>
 						<div class="activateSwitch" id="switchButton"></div>
 					</div>
 				</div>

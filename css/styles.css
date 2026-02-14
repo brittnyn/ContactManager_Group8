@@ -271,7 +271,7 @@ i
     overflow: hidden;
 }
 
-#switchBox a
+#switchBox button
 {
     display: flex;
     justify-content: center;
@@ -283,17 +283,24 @@ i
     width: 50%;
     border-radius: 30px;
     z-index: 10;
+    background: none;
+    border: none;
+}
+#switchBox button:hover
+{ 
+    cursor: pointer;
 }
 
 #switchButton
 {
     position: absolute;
+    left: 0;
     width: 50%;
     height: 45px;
     background: #72ABCF;
     box-shadow: 0 4px 15px rgba(84, 165, 213, 0.4);
     border-radius: 30px;
-    transition: .3s ease-in-out;
+    transition: .5s;
 }
 
 .errorMsg
@@ -306,7 +313,6 @@ i
     font-size: 14px;
     border-radius: 8px;
     background: rgba(255, 107, 107, 0.1);
-    border: 1px solid rgba(255, 107, 107, 0.3);
 }
 .errorMsg:empty
 {
@@ -471,7 +477,7 @@ body.contactPage {
     font-size: 14px;
     outline: none;
     transition: all 0.3s ease;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Funnel Sans', sans-serif;
 }
 
 .searchInput::placeholder {
