@@ -171,13 +171,14 @@ function doRegister()
 	// Use distinct local names so we don't shadow global firstName/lastName.
 	let regFirstName = document.getElementById("regFirst").value;
 	let regLastName = document.getElementById("regLast").value;
-	
 
     let username = document.getElementById("regUser").value;
     let password = document.getElementById("regPassword").value;
 	let repeat = document.getElementById("regRepeatPass").value;
 
+	//let error = validSignUpForm(firstName, lastName, username, password, repeat);
 	let error = validSignUpForm(regFirstName, regLastName, username, password, repeat);
+
 
 	if (error) 
 	{
@@ -245,7 +246,7 @@ function doRegister()
     }
 }
 
-function sasaveCookie()
+function saveCookie()
 {
 	let minutes = 20;
 	let date = new Date();
