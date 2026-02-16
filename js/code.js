@@ -1,4 +1,5 @@
-const urlBase = 'http://adamdisanti.xyz/LAMPAPI';
+// const urlBase = 'http://adamdisanti.xyz/LAMPAPI';
+const urlBase = 'http://localhost:8888/COP4331/ContactManager_Group8/LAMPAPI';
 const extension = 'php';
 
 let userId = 0;
@@ -168,15 +169,16 @@ function doLogin()
 
 function doRegister() 
 {
-    let firstName = document.getElementById("regFirst").value;
-    let lastName = document.getElementById("regLast").value;
+	// Use distinct local names so we don't shadow global firstName/lastName.
+	let regFirstName = document.getElementById("regFirst").value;
+	let regLastName = document.getElementById("regLast").value;
 	
 
     let username = document.getElementById("regUser").value;
     let password = document.getElementById("regPassword").value;
 	let repeat = document.getElementById("regRepeatPass").value;
 
-	let error = validSignUpForm(firstName, lastName, username, password, repeat);
+	let error = validSignUpForm(regFirstName, regLastName, username, password, repeat);
 
 	if (error) 
 	{
@@ -188,8 +190,8 @@ function doRegister()
 
     let tmp = 
 	{
-        firstName: firstName,
-        lastName: lastName,
+		firstName: regFirstName,
+		lastName: regLastName,
         login: username,
         password: hash
     };
@@ -223,8 +225,9 @@ function doRegister()
 
                 let jsonObject = JSON.parse(xhr.responseText);
                 userId = jsonObject.id;
-                firstName = jsonObject.firstName;
-                lastName = jsonObject.lastName;
+				// Persist into global state so saveCookie() includes the welcome name.
+				firstName = jsonObject.firstName;
+				lastName = jsonObject.lastName;
 				
 				document.getElementById("registerResult").style.color = "#51cf66";
 				document.getElementById("registerResult").style.backgroundColor = "rgba(81, 207, 102, 0.1)";
