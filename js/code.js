@@ -284,7 +284,7 @@ function readCookie()
 	else
 	{
 		document.getElementById("userName").innerHTML = firstName + " " + lastName;
-		// If we're on the contacts page, load this user's contacts immediately.
+		// If we're on the contacts page, do an empty search to populate user's contacts
 		if (document.getElementById("contactResults"))
 		{
 			searchContacts();
