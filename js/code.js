@@ -1,5 +1,4 @@
-// const urlBase = 'http://adamdisanti.xyz/LAMPAPI';
-const urlBase = 'http://localhost:8888/COP4331/ContactManager_Group8/LAMPAPI';
+const urlBase = 'http://adamdisanti.xyz/LAMPAPI';
 const extension = 'php';
 
 let userId = 0;
@@ -246,7 +245,7 @@ function doRegister()
     }
 }
 
-function saveCookie()
+function sasaveCookie()
 {
 	let minutes = 20;
 	let date = new Date();
