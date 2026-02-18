@@ -168,15 +168,17 @@ function doLogin()
 
 function doRegister() 
 {
-    let firstName = document.getElementById("regFirst").value;
-    let lastName = document.getElementById("regLast").value;
-	
+	// Use distinct local names so we don't shadow global firstName/lastName.
+	let regFirstName = document.getElementById("regFirst").value;
+	let regLastName = document.getElementById("regLast").value;
 
     let username = document.getElementById("regUser").value;
     let password = document.getElementById("regPassword").value;
 	let repeat = document.getElementById("regRepeatPass").value;
 
-	let error = validSignUpForm(firstName, lastName, username, password, repeat);
+	//let error = validSignUpForm(firstName, lastName, username, password, repeat);
+	let error = validSignUpForm(regFirstName, regLastName, username, password, repeat);
+
 
 	if (error) 
 	{
@@ -188,8 +190,8 @@ function doRegister()
 
     let tmp = 
 	{
-        firstName: firstName,
-        lastName: lastName,
+		firstName: regFirstName,
+		lastName: regLastName,
         login: username,
         password: hash
     };
@@ -223,8 +225,9 @@ function doRegister()
 
                 let jsonObject = JSON.parse(xhr.responseText);
                 userId = jsonObject.id;
-                firstName = jsonObject.firstName;
-                lastName = jsonObject.lastName;
+				// Persist into global state so saveCookie() includes the welcome name.
+				firstName = jsonObject.firstName;
+				lastName = jsonObject.lastName;
 				
 				document.getElementById("registerResult").style.color = "#51cf66";
 				document.getElementById("registerResult").style.backgroundColor = "rgba(81, 207, 102, 0.1)";
@@ -281,7 +284,7 @@ function readCookie()
 	else
 	{
 		document.getElementById("userName").innerHTML = firstName + " " + lastName;
-		// If we're on the contacts page, load this user's contacts immediately.
+		// If we're on the contacts page, do an empty search to populate user's contacts
 		if (document.getElementById("contactResults"))
 		{
 			searchContacts();
