@@ -1,0 +1,398 @@
+openapi: 3.0.3
+info:
+  title: Marmoris Contact Manager API
+  version: 1.0.0
+  description: |
+    API for user authentication and personal contact CRUD operations.
+    Notes:
+    - All endpoints currently use POST.
+    - Passwords are expected to be MD5-hashed by the client before sending.
+    - Error handling is not fully uniform across endpoints (documented as implemented).
+
+servers:
+  - url: http://adamdisanti.xyz/LAMPAPI
+    description: Production
+  - url: http://localhost:8888/COP4331/ContactManager_Group8/LAMPAPI
+    description: Local MAMP
+
+tags:
+  - name: Auth
+  - name: Contacts
+
+paths:
+  /Login.php:
+    post:
+      tags: [Auth]
+      summary: Log in user
+      description: Authenticates a user with login and MD5 password hash.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              login: RickL
+              password: 5832a71366768098cceb7095efb774f2
+      responses:
+        '200':
+          description: Success or invalid credentials (API returns both as 200)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              examples:
+                success:
+                  value:
+                    id: 1
+                    firstName: Rick
+                    lastName: Leinecker
+                    error: ""
+                invalidCredentials:
+                  value:
+                    id: 0
+                    firstName: ""
+                    lastName: ""
+                    error: No Records Found
+
+  /Register.php:
+    post:
+      tags: [Auth]
+      summary: Register new user
+      description: Creates a new user if login is unique.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              firstName: Adam
+              lastName: Disanti
+              login: adamd
+              password: 5832a71366768098cceb7095efb774f2
+      responses:
+        '200':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterSuccessResponse'
+              example:
+                id: 49
+                firstName: Adam
+                lastName: Disanti
+                error: ""
+        '409':
+          description: Username already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorOnlyResponse'
+              example:
+                error: Username Already Exists
+
+  /AddContact.php:
+    post:
+      tags: [Contacts]
+      summary: Add contact
+      description: Adds a contact for a specific user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddContactRequest'
+            example:
+              firstName: John
+              lastName: Doe
+              phone: 407-555-1111
+              email: john@example.com
+              userId: 1
+      responses:
+        '200':
+          description: Added (or DB error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorOnlyResponse'
+              examples:
+                success:
+                  value:
+                    error: ""
+                error:
+                  value:
+                    error: Duplicate entry...
+
+  /SearchContacts.php:
+    post:
+      tags: [Contacts]
+      summary: Search contacts
+      description: |
+        Searches contacts by first or last name for a single user.
+        Empty search string acts like wildcard and returns all contacts for that user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchContactsRequest'
+            example:
+              search: john
+              userId: 1
+      responses:
+        '200':
+          description: Results found or no records found (both returned as 200)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SearchContactsSuccessResponse'
+                  - $ref: '#/components/schemas/SearchContactsNoRecordsResponse'
+              examples:
+                success:
+                  value:
+                    results:
+                      - id: "1"
+                        FirstName: John
+                        LastName: Doe
+                        Phone: 407-555-1111
+                        Email: john@example.com
+                    error: ""
+                noRecords:
+                  value:
+                    id: 0
+                    firstName: ""
+                    lastName: ""
+                    error: No Records Found
+
+  /EditContact.php:
+    post:
+      tags: [Contacts]
+      summary: Edit contact
+      description: Updates a contact only if it belongs to the given user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditContactRequest'
+            example:
+              id: 12
+              firstName: John
+              lastName: Smith
+              phone: 407-555-2222
+              email: johnsmith@example.com
+              userId: 1
+      responses:
+        '200':
+          description: Updated (or validation/DB error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageWithErrorResponse'
+              examples:
+                success:
+                  value:
+                    message: Contact updated
+                    error: ""
+                error:
+                  value:
+                    error: Some database error
+
+  /DeleteContact.php:
+    post:
+      tags: [Contacts]
+      summary: Delete contact
+      description: Deletes a contact only if it belongs to the given user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteContactRequest'
+            example:
+              id: 12
+              userId: 1
+      responses:
+        '200':
+          description: Deleted or error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageWithErrorResponse'
+              examples:
+                success:
+                  value:
+                    message: Contact deleted
+                    error: ""
+                notOwnedOrMissing:
+                  value:
+                    error: Contact not found or not owned by user.
+                invalidInput:
+                  value:
+                    error: Invalid contact or user id.
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required: [login, password]
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+          description: MD5 hash string
+
+    LoginResponse:
+      type: object
+      required: [id, firstName, lastName, error]
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        error:
+          type: string
+
+    RegisterRequest:
+      type: object
+      required: [firstName, lastName, login, password]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        login:
+          type: string
+        password:
+          type: string
+          description: MD5 hash string
+
+    RegisterSuccessResponse:
+      type: object
+      required: [id, firstName, lastName, error]
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        error:
+          type: string
+
+    ErrorOnlyResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    AddContactRequest:
+      type: object
+      required: [firstName, lastName, phone, email, userId]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        userId:
+          type: integer
+
+    SearchContactsRequest:
+      type: object
+      required: [search, userId]
+      properties:
+        search:
+          type: string
+        userId:
+          type: integer
+
+    SearchContactItem:
+      type: object
+      required: [id, FirstName, LastName, Phone, Email]
+      properties:
+        id:
+          type: string
+          description: Returned as string by current PHP implementation
+        FirstName:
+          type: string
+        LastName:
+          type: string
+        Phone:
+          type: string
+        Email:
+          type: string
+
+    SearchContactsSuccessResponse:
+      type: object
+      required: [results, error]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchContactItem'
+        error:
+          type: string
+          example: ""
+
+    SearchContactsNoRecordsResponse:
+      type: object
+      required: [id, firstName, lastName, error]
+      properties:
+        id:
+          type: integer
+          example: 0
+        firstName:
+          type: string
+          example: ""
+        lastName:
+          type: string
+          example: ""
+        error:
+          type: string
+          example: No Records Found
+
+    EditContactRequest:
+      type: object
+      required: [id, firstName, lastName, phone, email, userId]
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        userId:
+          type: integer
+
+    DeleteContactRequest:
+      type: object
+      required: [id, userId]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+
+    MessageWithErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        error:
+          type: string
