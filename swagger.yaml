@@ -12,8 +12,6 @@ info:
 servers:
   - url: http://adamdisanti.xyz/LAMPAPI
     description: Production
-  - url: http://localhost:8888/COP4331/ContactManager_Group8/LAMPAPI
-    description: Local MAMP
 
 tags:
   - name: Auth
