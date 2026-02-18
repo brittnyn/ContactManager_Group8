@@ -550,8 +550,10 @@ function addContact()
 	let error = validContactInfo(first, last, phone, email);
 	if (error) 
 	{
-    	document.getElementById("contactAddResult").innerText = error;
-    	return;
+    	let resultEl = document.getElementById("contactAddResult");
+    	resultEl.innerText = error;
+    	resultEl.style.color = "#FFFFFF";
+    return;
 	}
  
 	let tmp = { firstName: first, lastName: last, email: email, phone: phone, userId: userId };
@@ -631,6 +633,8 @@ function searchContacts()
 			if (contacts.length > 0)
 			{
 				document.getElementById("contactAddResult").innerHTML = "Contacts retrieved";
+				document.getElementById("contactAddResult").style.color = "#FFFFFF";
+				
 			}
 		}
 	};
@@ -701,6 +705,8 @@ function renderContacts()
 	if (!contacts.length)
 	{
 		document.getElementById("contactResults").innerHTML = '<p class="emptyState">No contacts found.</p>';
+
+		document.getElementById("contactResults").style.color = "#FFFFFF";
 		return;
 	}
 
@@ -808,7 +814,9 @@ function saveEdit(index)
 	let error = validContactInfo(edited.firstName, edited.lastName, edited.phone, edited.email);
 	if (error) 
 	{
-    	document.getElementById("contactEditResult").innerText = error;
+    	let editResult = document.getElementById("contactEditResult");
+    	editResult.innerText = error;
+    	editResult.style.color = "#FFFFFF";  // <-- make text white
     	return;
 	}
 	let jsonPayload = JSON.stringify(edited);
@@ -837,6 +845,7 @@ function saveEdit(index)
 			if (res.error && res.error !== "") document.getElementById("contactEditResult").innerHTML = res.error;
 			else {
 				document.getElementById("contactEditResult").innerHTML = "Contact updated";
+				document.getElementById("contactEditResult").style.color = "#FFFFFF";
 				contacts[index] = edited;
 				// Exit edit mode only for the saved row; preserve all other drafts/edits.
 				delete editModeMap[index];
@@ -855,6 +864,8 @@ function deleteContact(index)
 	if (index < 0 || index >= contacts.length)
 	{
 		document.getElementById("contactDeleteResult").innerHTML = "Contact no longer available.";
+		document.getElementById("contactDeleteResult").style.color = "#FFFFFF";
+		
 		return;
 	}
 
@@ -877,6 +888,8 @@ function deleteContact(index)
 			else
 			{
 				document.getElementById("contactDeleteResult").innerHTML = "Contact deleted";
+				document.getElementById("contactDeleteResult").style.color = "#FFFFFF";
+				
 				contacts.splice(index, 1);
 				// Rebuild state maps after removing an item to avoid index drift.
 				expandedContactMap = {};
