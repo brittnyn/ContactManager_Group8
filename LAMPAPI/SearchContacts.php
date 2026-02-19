@@ -13,9 +13,10 @@
 	else
 	{
 		// Scope search strictly to the logged-in user's contacts.
-		$stmt = $conn->prepare("select * from Contacts where (FirstName like ? OR LastName like ?) and UserID=?");
-		$searchName = "%" . $inData["search"] . "%";
-		$stmt->bind_param("sss", $searchName, $searchName, $inData["userId"]);
+		// Allow matching by first name, last name, full name, phone, or email.
+		$stmt = $conn->prepare("select * from Contacts where UserID=? and (FirstName like ? OR LastName like ? OR CONCAT(FirstName, ' ', LastName) like ? OR Phone like ? OR Email like ?)");
+		$searchTerm = "%" . $inData["search"] . "%";
+		$stmt->bind_param("isssss", $inData["userId"], $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
 		$stmt->execute();
 		
 		$result = $stmt->get_result();

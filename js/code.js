@@ -304,7 +304,8 @@ function doLogout()
 const USERNAME_REGEX = /^(?=.*[a-zA-Z])[a-zA-Z0-9-_]{3,18}$/;
 const PASSWORD_REGEX = /^(?=.*\d)(?=.*[A-Za-z])(?=.*[!@#$%^&*]).{8,32}$/;
 const PHONE_REGEX = /^[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4}$/;
-const EMAIL_REGEX = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
+// Contact emails must end in .com.
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.com$/i;
 
 // Individual pattern checks
 const PATTERNS = {
@@ -552,7 +553,18 @@ function addContact()
 	let last = document.getElementById("lastName").value;
 	let email = document.getElementById("email").value;
 	let phone = document.getElementById("phone").value;
+	let emailEl = document.getElementById("email");
 	let phoneEl = document.getElementById("phone");
+	let phoneDigits = phone.replace(/\D/g, "");
+
+	// Enforce .com email format on Add Contact with native popup feedback.
+	if (!EMAIL_REGEX.test(email.trim()))
+	{
+		emailEl.setCustomValidity("Enter a valid email address");
+		emailEl.reportValidity();
+		return;
+	}
+	emailEl.setCustomValidity("");
 
 	// Keep required-field popup behavior for empty input.
 	if (!phone.trim())
@@ -563,9 +575,9 @@ function addContact()
 	}
 
 	// Use a custom popup message for non-empty invalid input.
-	if (!/^\d{10}$/.test(phone.trim()))
+	if (phoneDigits.length !== 10)
 	{
-		phoneEl.setCustomValidity("Enter 10 digit phone number. (123)-456-7890");
+		phoneEl.setCustomValidity("enter a 10 digit phone number");
 		phoneEl.reportValidity();
 		return;
 	}
@@ -748,10 +760,10 @@ function renderContacts()
 				</button>
 
 				<div class="contact-details ${isExpanded ? 'show' : ''}">
-					<input type="text" value="${safeFirstName}" id="first-${i}" placeholder="First Name" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'firstName', this.value)" />
-					<input type="text" value="${safeLastName}" id="last-${i}" placeholder="Last Name" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'lastName', this.value)" />
-					<input type="email" value="${safeEmail}" id="email-${i}" placeholder="Email Address" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'email', this.value)" />
-					<input type="tel" value="${safePhone}" id="phone-${i}" placeholder="Phone Number" ${isEditing ? '' : 'readonly'} oninput="updateContactDraft(${i}, 'phone', this.value)" />
+					<input type="text" value="${safeFirstName}" id="first-${i}" placeholder="First Name" ${isEditing ? '' : 'readonly'} oninput="this.setCustomValidity(''); updateContactDraft(${i}, 'firstName', this.value)" />
+					<input type="text" value="${safeLastName}" id="last-${i}" placeholder="Last Name" ${isEditing ? '' : 'readonly'} oninput="this.setCustomValidity(''); updateContactDraft(${i}, 'lastName', this.value)" />
+					<input type="text" value="${safeEmail}" id="email-${i}" placeholder="Email Address" ${isEditing ? '' : 'readonly'} oninput="this.setCustomValidity(''); updateContactDraft(${i}, 'email', this.value)" />
+					<input type="text" value="${safePhone}" id="phone-${i}" placeholder="Phone Number" ${isEditing ? '' : 'readonly'} oninput="this.setCustomValidity(''); updateContactDraft(${i}, 'phone', this.value)" />
 
 					<div class="actionsTop">
 						<button type="button" class="editBtn" onclick="toggleEditMode(${i})">${isEditing ? 'Cancel' : 'Edit'}</button>
@@ -826,14 +838,51 @@ function saveEdit(index)
 		userId: userId
 	};
 
-	let error = validContactInfo(edited.firstName, edited.lastName, edited.phone, edited.email);
-	if (error) 
+	const firstEl = document.getElementById(`first-${index}`);
+	const lastEl = document.getElementById(`last-${index}`);
+	const emailEl = document.getElementById(`email-${index}`);
+	const phoneEl = document.getElementById(`phone-${index}`);
+	const phoneDigits = edited.phone.replace(/\D/g, "");
+
+	// Use popup validation for edit/save just like Add Contact.
+	if (!edited.firstName.trim())
 	{
-    	let editResult = document.getElementById("contactEditResult");
-    	editResult.innerText = error;
-    	editResult.style.color = "#FFFFFF";  // <-- make text white
-    	return;
+		firstEl.setCustomValidity("First name is required.");
+		firstEl.reportValidity();
+		return;
 	}
+	firstEl.setCustomValidity("");
+
+	if (!edited.lastName.trim())
+	{
+		lastEl.setCustomValidity("Last name is required.");
+		lastEl.reportValidity();
+		return;
+	}
+	lastEl.setCustomValidity("");
+
+	if (!EMAIL_REGEX.test(edited.email.trim()))
+	{
+		emailEl.setCustomValidity("Enter a valid email address");
+		emailEl.reportValidity();
+		return;
+	}
+	emailEl.setCustomValidity("");
+
+	if (!edited.phone.trim())
+	{
+		phoneEl.setCustomValidity("");
+		phoneEl.reportValidity();
+		return;
+	}
+
+	if (phoneDigits.length !== 10)
+	{
+		phoneEl.setCustomValidity("Enter a 10 digit phone number");
+		phoneEl.reportValidity();
+		return;
+	}
+	phoneEl.setCustomValidity("");
 	let jsonPayload = JSON.stringify(edited);
 	let url = urlBase + '/EditContact.' + extension;
 

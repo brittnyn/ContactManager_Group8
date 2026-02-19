@@ -36,7 +36,7 @@
 			<section class="contactCard searchCard">
 				<h2><i class="fas fa-search"></i> Find Contacts</h2>
 				<div class="searchContainer">
-					<input type="text" id="searchText" class="searchInput" placeholder="Search by name..."/>
+					<input type="text" id="searchText" class="searchInput" placeholder="Search by name, phone, or email..."/>
 					<button type="button" class="searchBtn" onclick="searchContacts();">
 						<i class="fas fa-search"></i> Search
 					</button>
@@ -61,11 +61,11 @@
 							<input type="text" id="lastName" class="formInput" placeholder="Last Name" required/>
 						</div>
 						<div class="formField">
-							<input type="email" id="email" class="formInput" placeholder="Email Address" required/>
+							<input type="email" id="email" class="formInput" placeholder="Email Address" required oninput="this.setCustomValidity('')"/>
 						</div>
 						<div class="formField">
 							<input type="text" id="phone" class="formInput" placeholder="Phone Number" required inputmode="tel"
-								maxlength="10"
+								maxlength="14"
 								oninput="this.setCustomValidity('')"/>
 						</div>
 					</div>
