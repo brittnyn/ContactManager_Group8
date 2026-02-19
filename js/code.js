@@ -1,4 +1,4 @@
-const urlBase = 'http://adamdisanti.xyz/LAMPAPI';
+const urlBase = 'http://localhost:8888/COP4331/ContactManager_Group8/LAMPAPI';
 const extension = 'php';
 
 let userId = 0;
@@ -545,19 +545,31 @@ function validSignUpForm(firstName, lastName, username, password, repeat)
 
 function addContact()
 {
+	// Clear stale status text; validation feedback should use native popup tooltips.
+	document.getElementById("contactAddResult").innerHTML = "";
+
 	let first = document.getElementById("firstName").value;
 	let last = document.getElementById("lastName").value;
 	let email = document.getElementById("email").value;
 	let phone = document.getElementById("phone").value;
+	let phoneEl = document.getElementById("phone");
 
-	let error = validContactInfo(first, last, phone, email);
-	if (error) 
+	// Keep required-field popup behavior for empty input.
+	if (!phone.trim())
 	{
-    	let resultEl = document.getElementById("contactAddResult");
-    	resultEl.innerText = error;
-    	resultEl.style.color = "#FFFFFF";
-    return;
+		phoneEl.setCustomValidity("");
+		phoneEl.reportValidity();
+		return;
 	}
+
+	// Use a custom popup message for non-empty invalid input.
+	if (!/^\d{10}$/.test(phone.trim()))
+	{
+		phoneEl.setCustomValidity("Enter 10 digit phone number. (123)-456-7890");
+		phoneEl.reportValidity();
+		return;
+	}
+	phoneEl.setCustomValidity("");
  
 	let tmp = { firstName: first, lastName: last, email: email, phone: phone, userId: userId };
 	let jsonPayload = JSON.stringify(tmp);

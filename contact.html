@@ -64,7 +64,9 @@
 							<input type="email" id="email" class="formInput" placeholder="Email Address" required/>
 						</div>
 						<div class="formField">
-							<input type="tel" id="phone" class="formInput" placeholder="Phone Number" required/>
+							<input type="text" id="phone" class="formInput" placeholder="Phone Number" required inputmode="tel"
+								maxlength="10"
+								oninput="this.setCustomValidity('')"/>
 						</div>
 					</div>
 					<button type="submit" class="addBtn">
